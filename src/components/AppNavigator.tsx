@@ -87,7 +87,6 @@ const AnimatedTabBar = ({ state: { index: activeIndex, routes }, navigation, des
   }
 
   const [layout, dispatch] = useReducer(reducer, [])
-  console.log(layout)
 
   const handleLayout = (event: LayoutChangeEvent, index: number) => {
     dispatch({ x: event.nativeEvent.layout.x, index })
@@ -239,7 +238,3 @@ const styles = StyleSheet.create({
 })
 
 export default AppNavigator;
-
-//       <Tab.Screen name="News" component={NewsScreen} />
-//       <Tab.Screen name="Pay" component={PayScreen} />
-//       <Tab.Screen name="MyAccount" component={AccountScreen} />
