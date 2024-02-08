@@ -41,6 +41,8 @@ export default function PaymentScreen() {
     return () => deepLinkListener.remove();
   }, [handleDeepLink]);
 
+  // https://stripe.com/docs/libraries/react-native
+
   return (
     <StripeProvider
         publishableKey="pk_test_51OgVJzLevPehYIouZmmqxgYdBsUpSCEAFopmpN4idvlaZzi4665AuXJRlnpX0p1mGKoP6VkDWLOfSt8OvlAc9Tt400bHgGIYUf"

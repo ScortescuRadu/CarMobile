@@ -1,13 +1,53 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, Image, TextInput, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {ArrowLeftIcon} from 'react-native-heroicons/solid'
 import { themeColors } from '../theme'
 import { useNavigation } from '@react-navigation/native'
+import SInfo from 'react-native-sensitive-info';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/account/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        Alert.alert('Login Failed', response);
+        return;
+      }
+
+      const data = await response.json();
+
+      // Assuming the token is returned in the 'token' field of the response
+      const token = data.token;
+
+      // Store the token securely using react-native-sensitive-info
+      await SInfo.setItem('authToken', token, {});
+
+      // Navigate to AppNavigator after successful signup
+      navigation.navigate('AppNavigator');
+
+    } catch (error) {
+      console.error('Login Error:', error);
+      Alert.alert('Login Failed', 'An error occurred during Login. Please try again.');
+    }
+  };
+
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View className="flex-1 bg-white" style={{backgroundColor: themeColors.bg}}>
       <SafeAreaView  className="flex ">
         <View className="flex-row justify-start">
@@ -28,23 +68,27 @@ export default function LoginScreen() {
         className="flex-1 bg-white px-8 pt-8">
           <View className="form space-y-2">
             <Text className="text-gray-700 ml-4">Email Address</Text>
-            <TextInput 
+            <TextInput
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-              placeholder="email"
-              value="john@gmail.com" 
+              placeholder="Enter Email"
             />
             <Text className="text-gray-700 ml-4">Password</Text>
-            <TextInput 
+            <TextInput
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               className="p-4 bg-gray-100 text-gray-700 rounded-2xl"
               secureTextEntry
-              placeholder="password"
-              value="test12345" 
+              placeholder="Enter Password"
             />
             <TouchableOpacity className="flex items-end">
               <Text className="text-gray-700 mb-5">Forgot Password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              className="py-3 bg-yellow-400 rounded-xl">
+            <TouchableOpacity
+                  onPress={handleLogin}
+                  className="py-3 bg-yellow-400 rounded-xl"
+            >
                 <Text 
                     className="text-xl font-bold text-center text-gray-700"
                 >
@@ -61,9 +105,8 @@ export default function LoginScreen() {
                   <Text className="font-semibold text-yellow-500"> Sign Up</Text>
               </TouchableOpacity>
           </View>
-          
       </View>
     </View>
-    
+    </TouchableWithoutFeedback>
   )
 }
