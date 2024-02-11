@@ -14,6 +14,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomScreen'
 import SignUpScreen from './src/screens/SignupScreen';
 import SInfo from 'react-native-sensitive-info';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { fetchToken } from '../CarMobile/src/utils/Parsers';
 import { Text } from 'react-native-svg';
@@ -62,6 +63,7 @@ function App(): React.JSX.Element {
   }
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -70,6 +72,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="AppNavigator" component={AppNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

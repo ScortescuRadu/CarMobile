@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,14 +8,19 @@ import {
   Image,
   TouchableOpacity,
   Switch,
+  Button,
+  TouchableWithoutFeedback,
+  Alert
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import Modal from 'react-native-modal';
+import ImagePicker from 'react-native-image-crop-picker';
+import SInfo from 'react-native-sensitive-info';
 
 const SECTIONS = [
   {
     header: 'Preferences',
     items: [
-      { id: 'language', icon: 'globe', label: 'Language', type: 'select' },
       { id: 'darkMode', icon: 'moon', label: 'Dark Mode for News', type: 'toggle' },
     ],
   },
@@ -42,6 +47,120 @@ export default function Example() {
     wifi: false,
   });
 
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(
+    'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80'
+  );
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleModalPress = (e) => {
+    // Check if the press originated from inside the modal content
+    if (e.target.id === 'modalContainer') {
+      // Press originated from inside the modal content, do nothing
+      return;
+    }
+
+    // Press originated outside the modal content, close the modal
+    toggleModal();
+  };
+
+  const takePhotoFromCamera = async () => {
+    try {
+      const image = await ImagePicker.openCamera({
+        compressImageMaxWidth: 300,
+        compressImageMaxHeight: 300,
+        cropping: true,
+        compressImageQuality: 0.7
+      });
+      console.log(image);
+      setProfilePicture(image.path);
+      toggleModal();
+
+      await sendImageToServer(image.path);
+    } catch (error) {
+      console.error('Error taking photo from camera:', error);
+      Alert.alert('Error', 'Unable to take photo from camera. Please review your settings.');
+    }
+  }
+
+  const choosePhotoFromLibrary = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+        compressImageQuality: 0.7
+      });
+      console.log(image);
+      setProfilePicture(image.path);
+      toggleModal();
+
+      await sendImageToServer(image.path);
+    } catch (error) {
+      console.error('Error choosing photo from library:', error);
+      Alert.alert('Error', 'Unable to choose photo from library. Please try again.');
+    }
+  }
+
+  const sendImageToServer = async (imagePath) => {
+    try {
+      const formData = new FormData();
+      formData.append('cover', {
+        uri: imagePath,
+        type: 'image/jpeg', // adjust the type based on the image format
+        name: 'profile_picture.jpg',
+      });
+
+      const token = await SInfo.getItem('authToken', {});
+
+      const response = await fetch('http://127.0.0.1:8000/profile-picture/change/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Token ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log('Image uploaded successfully');
+      } else {
+        console.error('Error uploading image to the server:', response.statusText);
+        Alert.alert('Error', 'Unable to upload image to the server. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending image to the server:', error);
+      Alert.alert('Error', 'Unable to send image to the server. Please try again.');
+    }
+  }
+
+  const fetchProfilePicture = async () => {
+    const token = await SInfo.getItem('authToken', {});
+  
+    fetch('http://127.0.0.1:8000/profile-picture/display/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProfilePicture(`${data.cover}?${new Date().getTime()}`);
+        console.log('cover:', data.cover)
+      })
+      .catch((error) => {
+        console.error('Error fetching profile picture:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchProfilePicture(); // Fetch profile picture on component mount
+  }, []); // Empty dependency array ensures this effect runs only once
+
   return (
     <SafeAreaView style={{ backgroundColor: 'black' }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -49,28 +168,37 @@ export default function Example() {
           <Text style={styles.title}>Settings</Text>
         </View>
 
-        <View style={styles.profile}>
-          <Image
-            alt=""
-            source={{
-              uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80',
-            }}
-            style={styles.profileAvatar} />
+        <View style={styles.container}>
+            <View style={styles.profile}>
+              <TouchableOpacity onPress={toggleModal}>
+                <Image
+                  alt=""
+                  source={{
+                    uri: profilePicture
+                  }}
+                  style={styles.profileAvatar} />
+                </TouchableOpacity>
+              <Text style={styles.profileName}>John Doe</Text>
 
-          <Text style={styles.profileName}>John Doe</Text>
-
-          <Text style={styles.profileEmail}>john.doe@mail.com</Text>
-
-          <TouchableOpacity
-            onPress={() => {
-              // handle onPress
-            }}>
-            <View style={styles.profileAction}>
-              <Text style={styles.profileActionText}>Edit Profile</Text>
-
-              <FeatherIcon color="#fff" name="edit" size={16} />
+              <Text style={styles.profileEmail}>john.doe@mail.com</Text>
             </View>
-          </TouchableOpacity>
+
+            <Modal
+              isVisible={isModalVisible}
+              animationType="slide"
+              onRequestClose={toggleModal}
+              style={{ margin: 0 }}
+            >
+              <TouchableWithoutFeedback onPress={handleModalPress}>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent} collapsable={false} key={'modalContent'}>
+                    {/* Your buttons here */}
+                    <Button title="Take Photo" onPress={takePhotoFromCamera} />
+                    <Button title="Choose Photo" onPress={choosePhotoFromLibrary} />
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
         </View>
 
         {SECTIONS.map(({ header, items }) => (
@@ -244,5 +372,20 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: 'white',
     marginRight: 4,
+  },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
 });
