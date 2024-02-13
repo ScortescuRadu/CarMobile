@@ -50,7 +50,7 @@ const AppNavigator = () => {
             options={{
               headerShown: false,
               // @ts-ignore
-              tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../assets/lottie/upload.icon.json')} style={styles.icon} />,
+              tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../assets/lottie/chat.icon.json')} style={styles.icon} />,
             }}
             component={NewsScreen}
           />
@@ -59,7 +59,7 @@ const AppNavigator = () => {
             options={{
               headerShown: false,
               // @ts-ignore
-              tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../assets/lottie/chat.icon.json')} style={styles.icon} />,
+              tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../assets/lottie/upload.icon.json')} style={styles.icon} />,
             }}
             component={PayScreen}
           />

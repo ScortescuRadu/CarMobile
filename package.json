@@ -20,6 +20,7 @@
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-native": "0.73.3",
+    "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.15.0",
     "react-native-heroicons": "^4.0.0",
     "react-native-image-crop-picker": "^0.40.2",
@@ -32,7 +33,8 @@
     "react-native-sensitive-info": "^5.5.8",
     "react-native-svg": "^14.1.0",
     "react-native-vector-icons": "^10.0.3",
-    "react-native-video": "^5.2.1"
+    "react-native-video": "^5.2.1",
+    "react-navigation": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
