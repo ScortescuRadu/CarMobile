@@ -78,7 +78,33 @@ PODS:
     - lottie-ios (~> 4.4.0)
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
+  - MapboxCommon (23.8.6)
+  - MapboxCoreMaps (10.16.4):
+    - MapboxCommon (~> 23.8)
+  - MapboxCoreNavigation (2.17.0):
+    - MapboxDirections (~> 2.11.1)
+    - MapboxMobileEvents (~> 1.0)
+    - MapboxNavigationNative (~> 160.0.0)
+  - MapboxDirections (2.11.1):
+    - Polyline (~> 5.0)
+    - Turf (~> 2.6.1)
+  - MapboxMaps (10.16.4):
+    - MapboxCommon (= 23.8.6)
+    - MapboxCoreMaps (= 10.16.4)
+    - MapboxMobileEvents (= 1.0.10)
+    - Turf (~> 2.0)
+  - MapboxMobileEvents (1.0.10)
+  - MapboxNavigation (2.17.0):
+    - MapboxCoreNavigation (= 2.17.0)
+    - MapboxMaps (~> 10.16.1)
+    - MapboxMobileEvents (~> 1.0)
+    - MapboxSpeech (~> 2.0)
+    - Solar-dev (~> 3.0)
+  - MapboxNavigationNative (160.0.1):
+    - MapboxCommon (~> 23.8)
+  - MapboxSpeech (2.1.1)
   - OpenSSL-Universal (1.1.1100)
+  - Polyline (5.1.0)
   - RCT-Folly (2022.05.16.00):
     - boost
     - DoubleConversion
@@ -967,6 +993,10 @@ PODS:
     - react-native-video/Video (= 5.2.1)
   - react-native-video/Video (5.2.1):
     - React-Core
+  - react-native-webview (13.8.1):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
   - React-nativeconfig (0.73.3)
   - React-NativeModulesApple (0.73.3):
     - glog
@@ -1163,6 +1193,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - SocketRocket (0.6.1)
+  - Solar-dev (3.0.1)
   - Stripe (23.21.1):
     - StripeApplePay (= 23.21.1)
     - StripeCore (= 23.21.1)
@@ -1200,6 +1231,7 @@ PODS:
   - StripeUICore (23.21.1):
     - StripeCore (= 23.21.1)
   - TOCropViewController (2.6.1)
+  - Turf (2.6.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1231,6 +1263,7 @@ DEPENDENCIES:
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
+  - MapboxNavigation (~> 2.17)
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -1261,6 +1294,7 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-sensitive-info (from `../node_modules/react-native-sensitive-info`)
   - react-native-video (from `../node_modules/react-native-video`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1304,8 +1338,19 @@ SPEC REPOS:
     - fmt
     - libevent
     - lottie-ios
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxCoreNavigation
+    - MapboxDirections
+    - MapboxMaps
+    - MapboxMobileEvents
+    - MapboxNavigation
+    - MapboxNavigationNative
+    - MapboxSpeech
     - OpenSSL-Universal
+    - Polyline
     - SocketRocket
+    - Solar-dev
     - Stripe
     - StripeApplePay
     - StripeCore
@@ -1315,6 +1360,7 @@ SPEC REPOS:
     - StripePaymentsUI
     - StripeUICore
     - TOCropViewController
+    - Turf
 
 EXTERNAL SOURCES:
   boost:
@@ -1384,6 +1430,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-sensitive-info"
   react-native-video:
     :path: "../node_modules/react-native-video"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1461,7 +1509,17 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   lottie-ios: ef1be1f90d54255f08e09d767950e43714661178
   lottie-react-native: 34cfb1db79d0feb7bf7b200d4a4e2f164b0c5f58
+  MapboxCommon: 90f76693dc02438acbb5ea9a5b266a4c0eb1c875
+  MapboxCoreMaps: 7b07d1ca8c454a4381daf09df901b9d6bf90bce0
+  MapboxCoreNavigation: fb7967e584e1fb81060fe0b1380fb36781e71f5e
+  MapboxDirections: 31d61b8369d5dde6f6828f72905ab9a7e054cd2c
+  MapboxMaps: cbb38845a9bf49b124f0e937975d560a4e01894e
+  MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
+  MapboxNavigation: 2818173bfd07cfd3263776e5ff6664410083dcd7
+  MapboxNavigationNative: 539baa854733bcdb28f8c4a38528dd9ae94cee6d
+  MapboxSpeech: cd25ef99c3a3d2e0da72620ff558276ea5991a77
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
+  Polyline: 2a1f29f87f8d9b7de868940f4f76deb8c678a5b1
   RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
   RCTRequired: 9b898847f76977a6dfed2a08f4c5ed37add75ec0
   RCTTypeSafety: 0debdc4ba38c8138016d8d8ada4bdf9ec1b8aa82
@@ -1488,6 +1546,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-sensitive-info: 400c6e3d27945e15c8cddb5b4b92233c85ee06f8
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
+  react-native-webview: 0f93dc8f4208ae5365884922c3cd14da5037ca4c
   React-nativeconfig: 4d3076dc3dc498ec49819e4e4225b55d3507f902
   React-NativeModulesApple: 46f14baf36010b22ffd84fd89d5586e4148edfb3
   React-perflogger: 27ccacf853ba725524ef2b4e444f14e34d0837b0
@@ -1515,6 +1574,7 @@ SPEC CHECKSUMS:
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   RNVectorIcons: 210f910e834e3485af40693ad4615c1ec22fc02b
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  Solar-dev: 4612dc9878b9fed2667d23b327f1d4e54e16e8d0
   Stripe: d55e7338dabc599eddeee3b09eacd5c13457e1a2
   stripe-react-native: ee7309aeca7aeb9cabeec8e1434c84f114fdf74b
   StripeApplePay: 48973391091a96e30e6ef6b9b331dbaa31449dcb
@@ -1525,8 +1585,9 @@ SPEC CHECKSUMS:
   StripePaymentsUI: 1f8addf41697d0f298fd8a15e4edf3999fbc66bc
   StripeUICore: 95c5235db01a2d90b5bb72c85a804eaed4e64f17
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
+  Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
   Yoga: ff0382b894475dba0b4d2a5fda860bfee5a9afad
 
-PODFILE CHECKSUM: f44a89ad2a39f3d2c16f82842f49a3e3d8c17e30
+PODFILE CHECKSUM: 680123bc597ab57ebb05cb0657067a51c860a29b
 
-COCOAPODS: 1.15.0
+COCOAPODS: 1.15.2

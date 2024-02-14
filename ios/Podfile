@@ -39,6 +39,9 @@ target 'CarMobile' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'MapboxNavigation', '~> 2.17'
+#  pod 'ReactNativeUiLib', :path => '../node_modules/react-native-ui-lib/lib
+
   target 'CarMobileTests' do
     inherit! :complete
     # Pods for testing

@@ -14,6 +14,10 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-CarMobile-CarMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CarMobile-CarMobileTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A205EBA92B7C02BB00A94480 /* MapViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBA82B7C02BB00A94480 /* MapViewManager.swift */; };
+		A205EBAB2B7C02C700A94480 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBAA2B7C02C700A94480 /* MapView.swift */; };
+		A205EBB12B7C0FDB00A94480 /* WebViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB02B7C0FDB00A94480 /* WebViewManager.m */; };
+		A205EBB32B7CA2BF00A94480 /* TestViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB22B7CA2BF00A94480 /* TestViewManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +47,11 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-CarMobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CarMobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CarMobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CarMobile-CarMobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarMobile-CarMobileTests.release.xcconfig"; path = "Target Support Files/Pods-CarMobile-CarMobileTests/Pods-CarMobile-CarMobileTests.release.xcconfig"; sourceTree = "<group>"; };
+		A205EBA72B7C02BB00A94480 /* CarMobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CarMobile-Bridging-Header.h"; sourceTree = "<group>"; };
+		A205EBA82B7C02BB00A94480 /* MapViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewManager.swift; sourceTree = "<group>"; };
+		A205EBAA2B7C02C700A94480 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		A205EBB02B7C0FDB00A94480 /* WebViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebViewManager.m; sourceTree = "<group>"; };
+		A205EBB22B7CA2BF00A94480 /* TestViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewManager.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -88,10 +97,15 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				A205EBA82B7C02BB00A94480 /* MapViewManager.swift */,
+				A205EBB22B7CA2BF00A94480 /* TestViewManager.swift */,
+				A205EBB02B7C0FDB00A94480 /* WebViewManager.m */,
+				A205EBAA2B7C02C700A94480 /* MapView.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A205EBA72B7C02BB00A94480 /* CarMobile-Bridging-Header.h */,
 			);
 			name = CarMobile;
 			sourceTree = "<group>";
@@ -206,7 +220,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1500;
 					};
 				};
 			};
@@ -392,8 +406,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A205EBB12B7C0FDB00A94480 /* WebViewManager.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				A205EBB32B7CA2BF00A94480 /* TestViewManager.swift in Sources */,
+				A205EBAB2B7C02C700A94480 /* MapView.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				A205EBA92B7C02BB00A94480 /* MapViewManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +430,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-CarMobile-CarMobileTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -439,6 +458,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-CarMobile-CarMobileTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = CarMobileTests/Info.plist;
@@ -480,6 +500,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = CarMobile;
+				SWIFT_OBJC_BRIDGING_HEADER = "CarMobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -506,6 +527,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = CarMobile;
+				SWIFT_OBJC_BRIDGING_HEADER = "CarMobile-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

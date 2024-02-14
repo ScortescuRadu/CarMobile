@@ -1,14 +1,16 @@
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, requireNativeComponent } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NavigationScreen(){
     const navigation = useNavigation();
 
+    const MapView = requireNativeComponent('MapView');
+    const TestView = requireNativeComponent('TestView');
+
     return (
-        <View className='bg-white h-full w-full'>
-            <Text>MapBox</Text>
-        </View>
+            <MapView style={{height: '100%', width: '100%'}}/>
     )
 }
 
