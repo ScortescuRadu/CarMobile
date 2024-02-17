@@ -18,6 +18,8 @@
 		A205EBAB2B7C02C700A94480 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBAA2B7C02C700A94480 /* MapView.swift */; };
 		A205EBB12B7C0FDB00A94480 /* WebViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB02B7C0FDB00A94480 /* WebViewManager.m */; };
 		A205EBB32B7CA2BF00A94480 /* TestViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB22B7CA2BF00A94480 /* TestViewManager.swift */; };
+		A205EBB52B7D387100A94480 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB42B7D387100A94480 /* TestView.swift */; };
+		A205EBB72B7D42CF00A94480 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB62B7D42CF00A94480 /* TestViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,8 @@
 		A205EBAA2B7C02C700A94480 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		A205EBB02B7C0FDB00A94480 /* WebViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebViewManager.m; sourceTree = "<group>"; };
 		A205EBB22B7CA2BF00A94480 /* TestViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewManager.swift; sourceTree = "<group>"; };
+		A205EBB42B7D387100A94480 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		A205EBB62B7D42CF00A94480 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -99,6 +103,8 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				A205EBA82B7C02BB00A94480 /* MapViewManager.swift */,
 				A205EBB22B7CA2BF00A94480 /* TestViewManager.swift */,
+				A205EBB42B7D387100A94480 /* TestView.swift */,
+				A205EBB62B7D42CF00A94480 /* TestViewController.swift */,
 				A205EBB02B7C0FDB00A94480 /* WebViewManager.m */,
 				A205EBAA2B7C02C700A94480 /* MapView.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -406,7 +412,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A205EBB52B7D387100A94480 /* TestView.swift in Sources */,
 				A205EBB12B7C0FDB00A94480 /* WebViewManager.m in Sources */,
+				A205EBB72B7D42CF00A94480 /* TestViewController.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				A205EBB32B7CA2BF00A94480 /* TestViewManager.swift in Sources */,
 				A205EBAB2B7C02C700A94480 /* MapView.swift in Sources */,
@@ -486,6 +494,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CWG5ZLVCH8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = CarMobile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -514,6 +523,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CWG5ZLVCH8;
 				INFOPLIST_FILE = CarMobile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

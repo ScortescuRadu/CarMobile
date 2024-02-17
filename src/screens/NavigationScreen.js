@@ -10,7 +10,10 @@ export default function NavigationScreen(){
     const TestView = requireNativeComponent('TestView');
 
     return (
-            <MapView style={{height: '100%', width: '100%'}}/>
+            // <MapView style={{height: '100%', width: '100%'}}/>
+            <View>
+              <TestView style={{height: '100%', width: '100%'}}/>
+            </View>
     )
 }
 

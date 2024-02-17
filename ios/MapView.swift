@@ -15,6 +15,7 @@ import MapboxCoreNavigation
 @objc(MapView)
 class MapView: UIView{
   var mapView: NavigationMapView!
+  var routeCompletion: ((RouteResponse) -> Void)?
   
   override init(frame: CGRect) {
           super.init(frame: frame)
@@ -40,10 +41,15 @@ class MapView: UIView{
             case.failure(let error):
               print(error)
             case.success(let response):
-            self.mapView.showcase(response.routes ?? [])
+              print(response)
+              self.mapView.showcase(response.routes ?? [])
+              self.routeCompletion?(response)
+            
+              let navigationViewController = NavigationViewController(for: response, routeIndex: 0,
+                            routeOptions: routeOptions)
+//              self.present(navigationViewController, animated: true)
           }
         }
-        
       }
   
 //  override func viewDidLoad() {
