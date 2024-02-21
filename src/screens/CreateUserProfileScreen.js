@@ -7,43 +7,17 @@ import { useNavigation } from '@react-navigation/native';
 import SInfo from 'react-native-sensitive-info';
 
 // subscribe for more videos like this :)
-export default function SignUpScreen() {
+export default function CreateUserProfileScreen() {
     const navigation = useNavigation();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [username, setUsername] = useState('');
+    const [carId, setCarId] = useState('');
 
-    const validatePasswords = () => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const validateProfile = () => {
 
-        if (!emailRegex.test(email)) {
-            Alert.alert('Invalid Email', 'Please enter a valid email address.');
-            return false;
-        }
-
-        if (!email || !password || !confirmPassword) {
+        if (!username || !carId) {
           Alert.alert('Incomplete Fields', 'Please fill in all the fields.');
           return false;
         }
-      
-        if (password.length < 8) {
-          Alert.alert('Weak Password', 'Password must be at least 8 characters long.');
-          return false;
-        }
-      
-        // You can add more complex password requirements as needed
-        const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>]/;
-        if (!specialCharacterRegex.test(password)) {
-          Alert.alert('Weak Password', 'Password must include at least one special character.');
-          return false;
-        }
-      
-        if (password !== confirmPassword) {
-          Alert.alert('Passwords Mismatch', 'Passwords do not match. Please re-enter your passwords.');
-          return false;
-        }
-      
-        // You can perform other validations if needed.
       
         return true;
       };
@@ -54,14 +28,14 @@ export default function SignUpScreen() {
         }
     
         try {
-          const response = await fetch('http://127.0.0.1:8000/account/register', {
+          const response = await fetch('http://127.0.0.1:8000/user-profile/create/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              email: email,
-              password: password,
+              username: username,
+              car_id: carId,
             }),
           });
     
@@ -79,8 +53,8 @@ export default function SignUpScreen() {
           await SInfo.setItem('authToken', token, {});
     
           // Navigate to AppNavigator after successful signup
-          navigation.navigate('CreateUserProfile');
-    
+          navigation.navigate('AppNavigator');
+
         } catch (error) {
           console.error('Sign Up Error:', error);
           Alert.alert('Sign Up Failed', 'An error occurred during sign up. Please try again.');
@@ -108,35 +82,26 @@ export default function SignUpScreen() {
             style={{borderTopLeftRadius: 50, borderTopRightRadius: 50}}
         >
             <View className="form space-y-2">
-                <Text className="text-gray-700 ml-4">Email Address</Text>
+                <Text className="text-gray-700 ml-4">Username</Text>
                 <TextInput
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
+                    value={username}
+                    onChangeText={(text) => setUsername(text)}
                     className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
                     placeholder='Enter Name'
                 />
-                <Text className="text-gray-700 ml-4">Password</Text>
+                <Text className="text-gray-700 ml-4">Car ID</Text>
                 <TextInput
-                    value={password}
-                    onChangeText={(text) => setPassword(text)}
+                    value={carId}
+                    onChangeText={(text) => setCarId(text)}
                     className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-                    secureTextEntry
-                    placeholder='Enter Password'
-                />
-                <Text className="text-gray-700 ml-4">Confirm Password</Text>
-                <TextInput
-                    value={confirmPassword}
-                    onChangeText={(text) => setConfirmPassword(text)}
-                    className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
-                    secureTextEntry
-                    placeholder='Confirm Password'
+                    placeholder='Enter Name'
                 />
                 <TouchableOpacity
                     onPress={handleSignUp}
                     className="py-3 bg-yellow-400 rounded-xl"
                 >
                     <Text className="font-xl font-bold text-center text-gray-700">
-                        Create Profile
+                        Sign Up
                     </Text>
                 </TouchableOpacity>
             </View>

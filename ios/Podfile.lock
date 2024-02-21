@@ -1232,6 +1232,10 @@ PODS:
     - StripeCore (= 23.21.1)
   - TOCropViewController (2.6.1)
   - Turf (2.6.1)
+  - VisionCamera (3.9.0):
+    - React
+    - React-callinvoker
+    - React-Core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1322,6 +1326,7 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
+  - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1486,6 +1491,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   stripe-react-native:
     :path: "../node_modules/@stripe/stripe-react-native"
+  VisionCamera:
+    :path: "../node_modules/react-native-vision-camera"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1586,8 +1593,9 @@ SPEC CHECKSUMS:
   StripeUICore: 95c5235db01a2d90b5bb72c85a804eaed4e64f17
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
+  VisionCamera: 7a5c87805b13adaaa557132b44879ed1e1e39786
   Yoga: ff0382b894475dba0b4d2a5fda860bfee5a9afad
 
-PODFILE CHECKSUM: 680123bc597ab57ebb05cb0657067a51c860a29b
+PODFILE CHECKSUM: 76af5a2c0bcec5761778d84903460c3455a0a6ae
 
 COCOAPODS: 1.15.2

@@ -13,11 +13,13 @@ import AppNavigator from './src/components/AppNavigator';
 import LoginScreen from './src/screens/LoginScreen';
 import WelcomeScreen from './src/screens/WelcomScreen'
 import SignUpScreen from './src/screens/SignupScreen';
+import ArticleScreen from './src/screens/ArticleScreen';
 import SInfo from 'react-native-sensitive-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { fetchToken } from '../CarMobile/src/utils/Parsers';
 import { Text } from 'react-native-svg';
+import CreateUserProfileScreen from './src/screens/CreateUserProfileScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -33,7 +35,7 @@ function App(): React.JSX.Element {
       try {
         const token = await SInfo.getItem('authToken', {});
         const isAuthenticatedValue = token != null;
-        
+
         setInitialRouteName(isAuthenticatedValue ? 'AppNavigator' : 'Welcome');
         setIsAuthenticated(isAuthenticatedValue);
 
@@ -69,6 +71,8 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="CreateUserProfile" component={CreateUserProfileScreen} />
+        <Stack.Screen name="Article" component={ArticleScreen} />
         <Stack.Screen name="AppNavigator" component={AppNavigator} />
       </Stack.Navigator>
     </NavigationContainer>

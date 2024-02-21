@@ -47,6 +47,9 @@ export default function Example() {
     wifi: false,
   });
 
+  const [username, setUsername] = useState('');
+  const [carId, setCarId] = useState('');
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
     'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80'
@@ -157,9 +160,31 @@ export default function Example() {
       });
   };
 
+  const fetchUserProfile = async () => {
+      const token = await SInfo.getItem('authToken', {});
+
+      fetch('http://127.0.0.1:8000/user-profile/info/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUsername(data.username);
+          setCarId(data.car_id);
+          console.log('User Info:', data)
+        })
+        .catch((error) => {
+          console.error('Error fetching profile picture:', error);
+        });
+  };
+
   useEffect(() => {
-    fetchProfilePicture(); // Fetch profile picture on component mount
-  }, []); // Empty dependency array ensures this effect runs only once
+    fetchProfilePicture();
+    fetchUserProfile();
+  }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: 'black' }}>
@@ -178,9 +203,9 @@ export default function Example() {
                   }}
                   style={styles.profileAvatar} />
                 </TouchableOpacity>
-              <Text style={styles.profileName}>John Doe</Text>
+              <Text style={styles.profileName}>radusco</Text>
 
-              <Text style={styles.profileEmail}>john.doe@mail.com</Text>
+              <Text style={styles.profileEmail}>TM22SCO</Text>
             </View>
 
             <Modal
