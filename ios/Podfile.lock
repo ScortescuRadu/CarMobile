@@ -102,6 +102,10 @@ PODS:
     - Solar-dev (~> 3.0)
   - MapboxNavigationNative (160.0.1):
     - MapboxCommon (~> 23.8)
+  - MapboxSearch (1.0.0-rc.8):
+    - MapboxCommon (~> 23.6)
+  - MapboxSearchUI (1.0.0-rc.8):
+    - MapboxSearch (< 2.0, >= 1.0.0-rc.8)
   - MapboxSpeech (2.1.1)
   - OpenSSL-Universal (1.1.1100)
   - Polyline (5.1.0)
@@ -976,13 +980,21 @@ PODS:
   - React-Mapbuffer (0.73.3):
     - glog
     - React-debug
+  - react-native-address-autocomplete (0.4.1):
+    - React-Core
   - react-native-blur (4.4.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
+  - react-native-geolocation (3.2.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - react-native-image-picker (7.1.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
+    - React-Core
+  - react-native-maps (1.15.1):
     - React-Core
   - react-native-safe-area-context (4.9.0):
     - React-Core
@@ -1268,6 +1280,7 @@ DEPENDENCIES:
   - libevent (~> 2.1.12)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
   - MapboxNavigation (~> 2.17)
+  - MapboxSearchUI (< 2.0, >= 1.0.0-beta)
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -1293,8 +1306,11 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector-modern`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
+  - react-native-address-autocomplete (from `../node_modules/react-native-address-autocomplete`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-sensitive-info (from `../node_modules/react-native-sensitive-info`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -1351,6 +1367,8 @@ SPEC REPOS:
     - MapboxMobileEvents
     - MapboxNavigation
     - MapboxNavigationNative
+    - MapboxSearch
+    - MapboxSearchUI
     - MapboxSpeech
     - OpenSSL-Universal
     - Polyline
@@ -1425,10 +1443,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
+  react-native-address-autocomplete:
+    :path: "../node_modules/react-native-address-autocomplete"
   react-native-blur:
     :path: "../node_modules/@react-native-community/blur"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-sensitive-info:
@@ -1524,6 +1548,8 @@ SPEC CHECKSUMS:
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
   MapboxNavigation: 2818173bfd07cfd3263776e5ff6664410083dcd7
   MapboxNavigationNative: 539baa854733bcdb28f8c4a38528dd9ae94cee6d
+  MapboxSearch: ac6ce2083172dc1095c3519ee69fe91f31558504
+  MapboxSearchUI: ce955875d52399804e3afba2016b9387a54974fa
   MapboxSpeech: cd25ef99c3a3d2e0da72620ff558276ea5991a77
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   Polyline: 2a1f29f87f8d9b7de868940f4f76deb8c678a5b1
@@ -1548,8 +1574,11 @@ SPEC CHECKSUMS:
   React-jsinspector: 6fad0fe14882fb6b1c32e5cc8a4bd3d33a8b6790
   React-logger: cb0dd15ac67b00e7b771ef15203edcb29d4a3f8e
   React-Mapbuffer: d59258be3b0d2280c6ba8964ab6e36ec69211871
+  react-native-address-autocomplete: a60e37ce4f39c4b2359a4b7e8118f4623565b76b
   react-native-blur: 27113acc008facbc8accae5fb3a78b8424f64cfd
+  react-native-geolocation: 0ac6e11c1097d61b3836ab570c48c2bebb052604
   react-native-image-picker: 6c51359eca7a7df9f07e297218c25696eb9da976
+  react-native-maps: 4c07b21deac3ac3579558956b63e288efb8725bb
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-sensitive-info: 400c6e3d27945e15c8cddb5b4b92233c85ee06f8
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
@@ -1596,6 +1625,6 @@ SPEC CHECKSUMS:
   VisionCamera: 7a5c87805b13adaaa557132b44879ed1e1e39786
   Yoga: ff0382b894475dba0b4d2a5fda860bfee5a9afad
 
-PODFILE CHECKSUM: 76af5a2c0bcec5761778d84903460c3455a0a6ae
+PODFILE CHECKSUM: a3f4adae2318a078e4419d4344f98786b82b6214
 
 COCOAPODS: 1.15.2

@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "mapbox-common-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-common-ios.git",
+      "state" : {
+        "revision" : "72474daaeabb644edd449492f9e668f716da72e6",
+        "version" : "24.2.0"
+      }
+    },
+    {
+      "identity" : "search-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/search-ios.git",
+      "state" : {
+        "revision" : "4de3b3fdca0ea23982fd7f680f9ba3aad09449e3",
+        "version" : "2.0.0-rc.2"
+      }
+    }
+  ],
+  "version" : 2
+}

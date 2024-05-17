@@ -10,10 +10,8 @@
 		00E356F31AD99517003FC87E /* CarMobileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* CarMobileTests.m */; };
 		0C80B921A6F3F58F76C31292 /* libPods-CarMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-CarMobile.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-CarMobile-CarMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CarMobile-CarMobileTests.a */; };
-		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A205EBA92B7C02BB00A94480 /* MapViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBA82B7C02BB00A94480 /* MapViewManager.swift */; };
 		A205EBAB2B7C02C700A94480 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A205EBAA2B7C02C700A94480 /* MapView.swift */; };
 		A205EBB12B7C0FDB00A94480 /* WebViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A205EBB02B7C0FDB00A94480 /* WebViewManager.m */; };
@@ -239,6 +237,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				A26681352B8D14CA00C548E6 /* XCRemoteSwiftPackageReference "search-ios" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -261,8 +262,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,6 +726,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A26681352B8D14CA00C548E6 /* XCRemoteSwiftPackageReference "search-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mapbox/search-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = "2.0.0-rc.2";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

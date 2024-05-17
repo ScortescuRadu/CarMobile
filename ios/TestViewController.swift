@@ -11,6 +11,7 @@ import MapboxMaps
 import MapboxDirections
 import MapboxNavigation
 import MapboxCoreNavigation
+//import MapboxSearchUI
 
 class TestViewController: UIViewController {
   var mapView: NavigationMapView!
