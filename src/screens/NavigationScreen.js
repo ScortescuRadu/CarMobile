@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, Alert, TouchableOpacity } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import { StyleSheet, View, Text, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import MapView, { Marker, Callout, Polyline } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import MapViewDirections from 'react-native-maps-directions';
 import Spinner from 'react-native-spinkit';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
@@ -28,14 +28,19 @@ export default function NavigationScreen() {
     const [currentLocation, setCurrentLocation] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null); // Track the selected marker
     const [isLoading, setIsLoading] = useState(false); // Track loading state
+    const [routeLoading, setRouteLoading] = useState(false); // Track route loading state
+    const [routeCoordinates, setRouteCoordinates] = useState([]); // Store the route coordinates
+    const [drivingRouteLoading, setDrivingRouteLoading] = useState(false);
+    const [walkingRouteLoading, setWalkingRouteLoading] = useState(false);
+    const [showRoutes, setShowRoutes] = useState(false);
 
     useEffect(() => {
         // Get current location
         Geolocation.getCurrentPosition(
             (position) => {
                 const currentLoc = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
+                    latitude: 45.7316656, // position.coords.latitude,
+                    longitude: 21.2489799, // position.coords.longitude,
                 };
                 setInitialRegion({
                     ...currentLoc,
@@ -57,9 +62,11 @@ export default function NavigationScreen() {
         if (!isCoordinateNearMarkers({ latitude, longitude }, markers, 0.001)) { // Adjust the threshold as needed
             console.log('Selected Location:', { latitude, longitude });
             setSelectedLocation({ latitude, longitude });
-            fetchNearbyParkingLots(latitude, longitude, 1); // Call API with fixed distance of 1 km
+            if (!showRoutes) {
+              fetchNearbyParkingLots(latitude, longitude, 1); // Call API with fixed distance of 1 km
+            }
         } else {
-            Alert.alert('Too close to a green marker. Select a green marker or choose a different location.');
+            // Alert.alert('Too close to a green marker. Select a green marker or choose a different location.');
         }
     };
 
@@ -80,16 +87,20 @@ export default function NavigationScreen() {
     };
 
     const handleMarkerPress = (marker) => {
+      if (!showRoutes) {
         setSelectedMarker(marker);
+      }
     };
 
     const extendSearch = async () => {
         setIsLoading(true);
-        const initialLatitudeDelta = 0.02;
-        const initialLongitudeDelta = 0.02;
-        for (let i = 2; i <= 5; i++) {
+        setMarkers([]); // Clear previous markers before starting new search
+        const initialLatitudeDelta = 0.01; // Start with a smaller delta
+        const initialLongitudeDelta = 0.01; // Start with a smaller delta
+
+        for (let i = 1; i <= 5; i++) {
             await new Promise(resolve => setTimeout(resolve, 1000));  // Delay of 1 second
-            console.log('increment',i)
+            console.log('increment', i)
             mapViewRef.current.animateToRegion({
                 latitude: selectedLocation.latitude,
                 longitude: selectedLocation.longitude,
@@ -104,6 +115,33 @@ export default function NavigationScreen() {
         }
         setIsLoading(false);
         Alert.alert('Sorry, no available spots.');
+    };
+
+    const handleStartPress = async () => {
+        if (!selectedMarker || !selectedLocation || !currentLocation) return;
+        setRouteLoading(true);
+        setRouteCoordinates([]);
+        setDrivingRouteLoading(true);
+        setWalkingRouteLoading(true);
+        setShowRoutes(true);
+        setMarkers((prevMarkers) => {
+          if (!prevMarkers.some(marker => marker.id === selectedMarker.id)) {
+              return [...prevMarkers, selectedMarker];
+          }
+          return prevMarkers;
+        });
+    };
+
+    const fitMapToMarkers = (markers) => {
+      mapViewRef.current.fitToCoordinates(markers, {
+          edgePadding: {
+              top: 50,
+              right: 50,
+              bottom: 50,
+              left: 50,
+          },
+          animated: true,
+      });
     };
 
     return (
@@ -137,12 +175,56 @@ export default function NavigationScreen() {
                         >
                             <Callout>
                                 <View>
-                                    <Text>Parking Lot {marker.id}</Text>
                                     <Text>Price: ${marker.price}</Text>
+                                    <TouchableOpacity onPress={() => {
+                                        if (!showRoutes) handleStartPress();
+                                    }} style={styles.startButton}>
+                                        <Text style={styles.startButtonText}>Start</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </Callout>
                         </Marker>
                     ))}
+                    {routeLoading && (
+                        <>
+                            <MapViewDirections
+                                origin={currentLocation}
+                                destination={selectedMarker}
+                                apikey="AIzaSyDmT_iiMaICWSkmTykVj-mGdZpEPdIljwg"
+                                strokeWidth={4}
+                                strokeColor="blue"
+                                mode="DRIVING"
+                                onReady={(result) => {
+                                    setRouteCoordinates(result.coordinates);
+                                    setDrivingRouteLoading(false);
+                                    fitMapToMarkers([currentLocation, selectedMarker, selectedLocation]);
+                                    console.log('Driving route result:', result.coordinates);
+                                }}
+                                onError={(errorMessage) => {
+                                    console.log('Error fetching driving route:', errorMessage);
+                                    setDrivingRouteLoading(false);
+                                }}
+                            />
+                            <MapViewDirections
+                                origin={selectedMarker}
+                                destination={selectedLocation}
+                                apikey="AIzaSyDmT_iiMaICWSkmTykVj-mGdZpEPdIljwg"
+                                strokeWidth={2}
+                                strokeColor="green"
+                                mode="WALKING"
+                                lineDashPattern={[1, 5]}
+                                onReady={(result) => {
+                                    setRouteCoordinates((prev) => [...prev, ...result.coordinates]);
+                                    console.log('Walking route result:', result.coordinates);
+                                    setWalkingRouteLoading(false);
+                                }}
+                                onError={(errorMessage) => {
+                                    console.log('Error fetching walking route:', errorMessage);
+                                    setWalkingRouteLoading(false);
+                                }}
+                            />
+                        </>
+                    )}
                 </MapView>
             )}
             <View style={styles.searchContainer}>
@@ -163,7 +245,7 @@ export default function NavigationScreen() {
                             }, 1000); // Pan and zoom to the selected location
                             fetchNearbyParkingLots(location.lat, location.lng, 1); // Call API with fixed distance of 1 km
                         } else {
-                            Alert.alert('Too close to a green marker. Select a green marker or choose a different location.');
+                            // Alert.alert('Too close to a green marker. Select a green marker or choose a different location.');
                         }
                     }}
                     query={{
@@ -196,7 +278,7 @@ export default function NavigationScreen() {
                     fetchDetails={true}
                 />
             </View>
-            {markers.length === 0 && selectedLocation && !isLoading && (
+            {markers.length === 0 && selectedLocation && !isLoading && !showRoutes && (
                 <TouchableOpacity style={styles.extendSearchButton} onPress={extendSearch}>
                     <Text style={styles.extendSearchText}>Extend search</Text>
                 </TouchableOpacity>
@@ -205,6 +287,23 @@ export default function NavigationScreen() {
                 <View style={styles.loadingOverlay}>
                     <Spinner isVisible={true} size={100} type="Circle" color="#FFF" />
                 </View>
+            )}
+            {(drivingRouteLoading || walkingRouteLoading) && (
+                <View style={styles.loadingOverlay}>
+                    <Spinner isVisible={true} size={100} type="ChasingDots" color="#FFF" />
+                    <Text style={styles.loadingText}>Calculating route...</Text>
+                </View>
+            )}
+            {showRoutes && (
+                <TouchableOpacity style={styles.stopButton} onPress={() => {
+                    setShowRoutes(false);
+                    setRouteCoordinates([]);
+                    setRouteLoading(false);
+                    setDrivingRouteLoading(false);
+                    setWalkingRouteLoading(false);
+                }}>
+                    <Text style={styles.stopButtonText}>X</Text>
+                </TouchableOpacity>
             )}
         </View>
     );
@@ -226,8 +325,8 @@ const styles = StyleSheet.create({
     },
     extendSearchButton: {
         position: 'absolute',
-        bottom: '5%',
-        left: '36%',
+        bottom: '7%',
+        left: '35%',
         // transform: [{ translateX: -50% }],
         flexDirection: 'row',
         backgroundColor: '#000',
@@ -251,5 +350,33 @@ const styles = StyleSheet.create({
     loadingText: {
         color: '#fff',
         marginTop: 10,
+    },
+    startButton: {
+        marginTop: 10,
+        backgroundColor: 'blue',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    startButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    stopButton: {
+      position: 'absolute',
+      top: '15%',
+      right: 20,
+      backgroundColor: '#FFF',
+      borderRadius: 50,
+      width: 40,
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 3,
+    },
+    stopButtonText: {
+        color: '#000',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
 });
