@@ -33,6 +33,7 @@ export default function NavigationScreen() {
     const [drivingRouteLoading, setDrivingRouteLoading] = useState(false);
     const [walkingRouteLoading, setWalkingRouteLoading] = useState(false);
     const [showRoutes, setShowRoutes] = useState(false);
+    const [estimatedTime, setEstimatedTime] = useState(null);
 
     useEffect(() => {
         // Get current location
@@ -179,7 +180,7 @@ export default function NavigationScreen() {
                                     <TouchableOpacity onPress={() => {
                                         if (!showRoutes) handleStartPress();
                                     }} style={styles.startButton}>
-                                        <Text style={styles.startButtonText}>Start</Text>
+                                        <Text style={styles.startButtonText}>Select</Text>
                                     </TouchableOpacity>
                                 </View>
                             </Callout>
@@ -196,6 +197,7 @@ export default function NavigationScreen() {
                                 mode="DRIVING"
                                 onReady={(result) => {
                                     setRouteCoordinates(result.coordinates);
+                                    setEstimatedTime(result.duration);
                                     setDrivingRouteLoading(false);
                                     fitMapToMarkers([currentLocation, selectedMarker, selectedLocation]);
                                     console.log('Driving route result:', result.coordinates);
@@ -305,6 +307,14 @@ export default function NavigationScreen() {
                     <Text style={styles.stopButtonText}>X</Text>
                 </TouchableOpacity>
             )}
+            {showRoutes && (
+                <View style={styles.confirmBox}>
+                    <Text style={styles.confirmBoxTitle}>Estimated Time: {Math.round(estimatedTime)} mins</Text>
+                    <TouchableOpacity style={styles.confirmButton}>
+                        <Text style={styles.confirmButtonText}>Start</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
         </View>
     );
 }
@@ -352,15 +362,17 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     startButton: {
-        marginTop: 10,
-        backgroundColor: 'blue',
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 5,
+      marginTop: 10,
+      backgroundColor: 'blue',
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     startButtonText: {
-        color: '#fff',
-        fontSize: 16,
+      color: '#fff',
+      fontSize: 16,
     },
     stopButton: {
       position: 'absolute',
@@ -379,4 +391,39 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    confirmBox: {
+      position: 'absolute',
+      bottom: '5%',
+      left: '5%',
+      right: '5%',
+      backgroundColor: '#fff',
+      padding: 20,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,
+      elevation: 5,
+      zIndex: 2,
+      alignItems: 'center',
+  },
+  confirmBoxTitle: {
+      fontWeight: 'bold',
+      fontSize: 18,
+      marginBottom: 10,
+  },
+  confirmBoxSubtitle: {
+      fontSize: 16,
+      marginBottom: 20,
+  },
+  confirmButton: {
+      backgroundColor: 'black',
+      paddingVertical: 10,
+      paddingHorizontal: 50,
+      borderRadius: 5,
+  },
+  confirmButtonText: {
+      color: '#fff',
+      fontSize: 16,
+  },
 });
