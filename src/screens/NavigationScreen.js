@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Spinner from 'react-native-spinkit';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -25,6 +27,7 @@ export default function NavigationScreen() {
     const [markers, setMarkers] = useState([]);
     const [currentLocation, setCurrentLocation] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null); // Track the selected marker
+    const [isLoading, setIsLoading] = useState(false); // Track loading state
 
     useEffect(() => {
         // Get current location
@@ -51,12 +54,12 @@ export default function NavigationScreen() {
 
     const handleMapPress = (event) => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
-        if (!isCoordinateNearMarkers({ latitude, longitude }, markers, 0.0001)) { // Adjust the threshold as needed
+        if (!isCoordinateNearMarkers({ latitude, longitude }, markers, 0.001)) { // Adjust the threshold as needed
             console.log('Selected Location:', { latitude, longitude });
             setSelectedLocation({ latitude, longitude });
             fetchNearbyParkingLots(latitude, longitude, 1); // Call API with fixed distance of 1 km
         } else {
-            // Alert.alert('Too close to a green marker. Select a green marker or choose a different location.');
+            Alert.alert('Too close to a green marker. Select a green marker or choose a different location.');
         }
     };
 
@@ -64,14 +67,43 @@ export default function NavigationScreen() {
         try {
             const response = await fetch(`http://127.0.0.1:8000/parking/radius-search/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
             const data = await response.json();
-            setMarkers(data);
+            if (data.length > 0) {
+                setMarkers(data);
+                return true;
+            } else {
+                setMarkers([]); // Clear markers if no data is returned
+            }
         } catch (error) {
             console.error('Error fetching nearby parking lots:', error);
         }
+        return false;
     };
 
     const handleMarkerPress = (marker) => {
         setSelectedMarker(marker);
+    };
+
+    const extendSearch = async () => {
+        setIsLoading(true);
+        const initialLatitudeDelta = 0.02;
+        const initialLongitudeDelta = 0.02;
+        for (let i = 2; i <= 5; i++) {
+            await new Promise(resolve => setTimeout(resolve, 1000));  // Delay of 1 second
+            console.log('increment',i)
+            mapViewRef.current.animateToRegion({
+                latitude: selectedLocation.latitude,
+                longitude: selectedLocation.longitude,
+                latitudeDelta: initialLatitudeDelta * i,
+                longitudeDelta: initialLongitudeDelta * i,
+            }, 1000); // Zoom out
+            const success = await fetchNearbyParkingLots(selectedLocation.latitude, selectedLocation.longitude, i);
+            if (success) {
+                setIsLoading(false);
+                return;
+            }
+        }
+        setIsLoading(false);
+        Alert.alert('Sorry, no available spots.');
     };
 
     return (
@@ -111,16 +143,6 @@ export default function NavigationScreen() {
                             </Callout>
                         </Marker>
                     ))}
-                    {selectedMarker && (
-                        <Marker coordinate={{ latitude: selectedMarker.latitude, longitude: selectedMarker.longitude }}>
-                            <Callout>
-                                <View>
-                                    <Text>Selected Parking Lot {selectedMarker.id}</Text>
-                                    <Text>Price: ${selectedMarker.price}</Text>
-                                </View>
-                            </Callout>
-                        </Marker>
-                    )}
                 </MapView>
             )}
             <View style={styles.searchContainer}>
@@ -174,6 +196,16 @@ export default function NavigationScreen() {
                     fetchDetails={true}
                 />
             </View>
+            {markers.length === 0 && selectedLocation && !isLoading && (
+                <TouchableOpacity style={styles.extendSearchButton} onPress={extendSearch}>
+                    <Text style={styles.extendSearchText}>Extend search</Text>
+                </TouchableOpacity>
+            )}
+            {isLoading && (
+                <View style={styles.loadingOverlay}>
+                    <Spinner isVisible={true} size={100} type="Circle" color="#FFF" />
+                </View>
+            )}
         </View>
     );
 }
@@ -191,5 +223,33 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 10,
         zIndex: 1,
+    },
+    extendSearchButton: {
+        position: 'absolute',
+        bottom: '5%',
+        left: '36%',
+        // transform: [{ translateX: -50% }],
+        flexDirection: 'row',
+        backgroundColor: '#000',
+        padding: 10,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 2,
+    },
+    extendSearchText: {
+        color: '#fff',
+        marginLeft: 5,
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2,
+    },
+    loadingText: {
+        color: '#fff',
+        marginTop: 10,
     },
 });
