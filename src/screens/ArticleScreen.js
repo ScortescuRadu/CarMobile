@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {ArrowLeftIcon} from 'react-native-heroicons/solid'
 import { Card } from '@rneui/themed';
 import CommentSection from '../components/CommentSection';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const styles = StyleSheet.create({
     container: {
@@ -62,15 +63,15 @@ const styles = StyleSheet.create({
     
     // Description
     descriptionContainer: {
-        backgroundColor: '#799cad',
-        color: '#fff',
+        backgroundColor: 'white',
+        color: 'black',
         padding: 30,
         borderWidth: 3,
         borderColor: 'black',
     },
     descriptionText: {
         marginBottom: 15,
-        color: 'white',
+        color: 'black',
     },
 
     // Section1
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
 
       // Cover2
       section2CoverContainer: {
-        backgroundColor: 'snow',
+        backgroundColor: 'purple',
         color: '#fff',
         height: 320,
         borderWidth: 3,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
 
       // Description2
       description2Container: {
-        backgroundColor: 'grey',
+        backgroundColor: 'white',
         color: 'white',
         padding: 30,
         borderWidth: 3,
@@ -171,8 +172,47 @@ const ArticleScreen = () => {
   }, [id]); 
 
   if (!article) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={{ marginTop: 80, flex: 1 }}>
+        <SafeAreaView  className="flex">
+            <View className="flex-row justify-start">
+            <TouchableOpacity onPress={()=> navigation.goBack()} 
+            className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4">
+                <ArrowLeftIcon size="20" color="black" />
+            </TouchableOpacity>
+            </View>        
+        </SafeAreaView>
+        <SkeletonPlaceholder>
+          <SkeletonPlaceholder.Item flexDirection="column" alignItems="center" >
+            <SkeletonPlaceholder.Item width={300} height={200} borderRadius={10} />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={120}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={6}
+              width={240}
+              height={20}
+              borderRadius={4}
+            />
+            <SkeletonPlaceholder.Item
+              marginTop={20}
+              width="90%"
+              height={100}
+              borderRadius={4}
+            />
+          </SkeletonPlaceholder.Item>
+        </SkeletonPlaceholder>
+      </View>
+    );
   }
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-GB'); // Format as "day/month/year"
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -194,7 +234,7 @@ const ArticleScreen = () => {
                     />
                     <View style={styles.coverContentContainer}>
                     <Text style={styles.coverTitle}>{article.title}</Text>
-                    <Text style={styles.coverTimestamp}>{article.timestamp}</Text>
+                    <Text style={styles.coverTimestamp}>{formatDate(article.timestamp)}</Text>
                     </View>
                 </Card>
             </View>
@@ -239,7 +279,7 @@ const ArticleScreen = () => {
                     <Text style={[styles.description2Text, { fontSize: 16 }]}>{article.description_2}</Text>
                 </View>
             )}
-            <CommentSection article={article}/>
+            <CommentSection articleId={article.id}/>
         </ScrollView>
     </View>
   );

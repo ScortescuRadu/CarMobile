@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
-import MapView, { Marker, Callout, Polyline } from 'react-native-maps';
+import { StyleSheet, View, Text, Alert, TouchableOpacity, NativeModules, requireNativeComponent } from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
@@ -19,6 +19,8 @@ const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     return false;
 };
 
+// const TestView = requireNativeComponent('TestView');
+
 export default function NavigationScreen() {
     const mapViewRef = useRef(null);  // Reference to the MapView
 
@@ -34,6 +36,7 @@ export default function NavigationScreen() {
     const [walkingRouteLoading, setWalkingRouteLoading] = useState(false);
     const [showRoutes, setShowRoutes] = useState(false);
     const [estimatedTime, setEstimatedTime] = useState(null);
+    const [confirmPress, setConfirmPress] = useState(false);
 
     useEffect(() => {
         // Get current location
@@ -133,6 +136,10 @@ export default function NavigationScreen() {
         });
     };
 
+    const handleConfirmPress = () => {
+      setConfirmPress(true);
+    };
+
     const fitMapToMarkers = (markers) => {
       mapViewRef.current.fitToCoordinates(markers, {
           edgePadding: {
@@ -200,7 +207,7 @@ export default function NavigationScreen() {
                                     setEstimatedTime(result.duration);
                                     setDrivingRouteLoading(false);
                                     fitMapToMarkers([currentLocation, selectedMarker, selectedLocation]);
-                                    console.log('Driving route result:', result.coordinates);
+                                    // console.log('Driving route result:', result.coordinates);
                                 }}
                                 onError={(errorMessage) => {
                                     console.log('Error fetching driving route:', errorMessage);
@@ -217,7 +224,7 @@ export default function NavigationScreen() {
                                 lineDashPattern={[1, 5]}
                                 onReady={(result) => {
                                     setRouteCoordinates((prev) => [...prev, ...result.coordinates]);
-                                    console.log('Walking route result:', result.coordinates);
+                                    // console.log('Walking route result:', result.coordinates);
                                     setWalkingRouteLoading(false);
                                 }}
                                 onError={(errorMessage) => {
@@ -310,11 +317,20 @@ export default function NavigationScreen() {
             {showRoutes && (
                 <View style={styles.confirmBox}>
                     <Text style={styles.confirmBoxTitle}>Estimated Time: {Math.round(estimatedTime)} mins</Text>
-                    <TouchableOpacity style={styles.confirmButton}>
+                    <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmPress}>
                         <Text style={styles.confirmButtonText}>Start</Text>
                     </TouchableOpacity>
                 </View>
             )}
+            {/* {confirmPress && (
+                <TestView
+                    style={{height: '100%', width: '100%'}}
+                    startLat={currentLocation.latitude}
+                    startLng={currentLocation.longitude}
+                    destLat={selectedMarker.latitude}
+                    destLng={selectedMarker.longitude}
+                />
+            )} */}
         </View>
     );
 }
