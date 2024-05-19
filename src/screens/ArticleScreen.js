@@ -200,7 +200,7 @@ const ArticleScreen = () => {
             <SkeletonPlaceholder.Item
               marginTop={20}
               width="90%"
-              height={100}
+              height={400}
               borderRadius={4}
             />
           </SkeletonPlaceholder.Item>
