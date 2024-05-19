@@ -4,8 +4,6 @@ import { SearchBar } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Import other necessary modules for React Native.
-
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 24,
@@ -221,12 +219,17 @@ const styles = StyleSheet.create({
 export default function NewsScreen(){
   const navigation = useNavigation();
   const [firstArticles, setFirstArticles] = useState(null);
+  const [topReadArticles, setTopReadArticles] = useState([]);
+  const [excludedArticles, setExcludedArticles] = useState([]);
+  const [latestGreenArticle, setLatestGreenArticle] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const topics = [
     { name: 'Sports', color: 'red' },
-    { name: 'Announcements', color: 'green' },
+    { name: 'Announcements', color: 'orange' },
     { name: 'Emergency', color: 'blue' },
     { name: 'City', color: 'purple' },
+    { name: 'Green', color: 'green' },
   ];
   const [selectedTopics, setSelectedTopics] = useState([]);
 
@@ -236,16 +239,18 @@ export default function NewsScreen(){
 
   const [loading, setLoading] = useState(true);
 
-  const handleTopicPress = (topic) => {
-      setSelectedTopics((prevSelectedTopics) => {
-        if (prevSelectedTopics.includes(topic)) {
-          // Deselect the topic
-          return prevSelectedTopics.filter((selectedTopic) => selectedTopic !== topic);
-        } else {
-          // Select the topic
-          return [...prevSelectedTopics, topic];
-        }
-      });
+  const handleSearch = async (topics = selectedTopics) => {
+    try {
+      setLoading(true);
+      const topicQuery = topics.length ? `&topic=${topics.join(',').toLowerCase()}` : '';
+      const response = await fetch(`http://127.0.0.1:8000/article/search/?query=${searchText}${topicQuery}`);
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -254,11 +259,23 @@ export default function NewsScreen(){
       try {
         setLoading(true); // Set loading to true when fetching starts
     
-        const response = await fetch('http://127.0.0.1:8000/article/latest/');
-        const data = await response.json();
-        console.log(data);
-    
-        setFirstArticles(data);
+        const firstResponse = await fetch('http://127.0.0.1:8000/article/latest/');
+        const firstData = await firstResponse.json();
+        setFirstArticles(firstData);
+        
+        const topReadResponse = await fetch('http://127.0.0.1:8000/article/top-read-last-week/');
+        const topReadData = await topReadResponse.json();
+        setTopReadArticles(topReadData);
+
+        const latestGreenResponse = await fetch('http://127.0.0.1:8000/article/latest-green/');
+        const latestGreenData = await latestGreenResponse.json();
+        console.log(latestGreenData)
+        setLatestGreenArticle(latestGreenData);
+
+        const excludedResponse = await fetch('http://127.0.0.1:8000/article/excluded-articles/');
+        const excludedData = await excludedResponse.json();
+        setExcludedArticles(excludedData);
+
       } catch (error) {
         console.error('Error fetching first article:', error);
       } finally {
@@ -278,6 +295,17 @@ export default function NewsScreen(){
     navigation.navigate('Article', params);
   };
 
+  const handleTopicPress = (topic) => {
+    setSelectedTopics((prevSelectedTopics) => {
+      const updatedTopics = prevSelectedTopics.includes(topic)
+        ? prevSelectedTopics.filter((selectedTopic) => selectedTopic !== topic)
+        : [...prevSelectedTopics, topic];
+  
+      handleSearch(updatedTopics);
+      return updatedTopics;
+    });
+  };
+
   const renderArticle = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item.id)}>
       <View style={styles.mainCoverContainer}>
@@ -292,10 +320,18 @@ export default function NewsScreen(){
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      style={[styles.filterButton, selectedTopics.includes(item.name), { backgroundColor: item.color }]}
-      onPress={() => handleTopicPress(item)}
+      style={[
+        styles.filterButton,
+        { backgroundColor: selectedTopics.includes(item.name) ? 'white' : item.color },
+      ]}
+      onPress={() => handleTopicPress(item.name)}
     >
-      <Text style={styles.topicText}>{item.name}</Text>
+      <Text style={[
+        styles.topicText,
+        { color: selectedTopics.includes(item.name) ? item.color : 'black' },
+      ]}>
+        {item.name}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -351,10 +387,8 @@ export default function NewsScreen(){
   const SkeletonComponent = () => {
   return (
     <View style={styles.skeletonContainer}>
-      {/* Placeholder for each skeleton item */}
       <View style={styles.skeletonItem} />
       <View style={styles.skeletonItem} />
-      {/* Add more skeleton items as needed */}
     </View>
   );
 };
@@ -384,6 +418,7 @@ export default function NewsScreen(){
           value={searchText}
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchBarInputContainer}
+          onSubmitEditing={handleSearch}
         />
         <FlatList
           horizontal
@@ -393,18 +428,28 @@ export default function NewsScreen(){
           keyExtractor={(item) => item.name}
           contentContainerStyle={styles.filtersContainer}
         />
-
+        {searchResults && (
+          <View style={styles.searchResultsSection}>
+            <Text style={styles.searchResultsTitle}>Search Results</Text>
+            <FlatList
+              data={searchResults}
+              renderItem={({ item }) => <TopicCard article={item} />}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={styles.articleListContainer}
+            />
+          </View>
+        )}
         <View style={styles.topArticleSection}>
           <Text style={styles.topArticlesTitle}>Top Articles of the Week</Text>
           <FlatList
-            data={firstArticles} //.slice(0, 3)
+            data={topReadArticles} //.slice(0, 3)
             renderItem={({ item, index }) => <ArticleCard article={item} index={index} />}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.articleListContainer}
           />
         </View>
         <FlatList
-          data={firstArticles}
+          data={excludedArticles.slice(0, 5)}
           renderItem={({ item }) => <TopicCard article={item} />}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.articleListContainer}
@@ -417,16 +462,16 @@ export default function NewsScreen(){
             <Text style={styles.greenArticleTitle}>Green News</Text>
           </View>
           <View style={styles.popularCard}>
-          <TouchableOpacity onPress={() => handlePress(firstArticles[0].id)}>
-              <Image source={{ uri: `http://127.0.0.1:8000/${firstArticles[0].cover}` }} style={styles.popularImage} />
+          <TouchableOpacity onPress={() => handlePress(latestGreenArticle.id)}>
+              <Image source={{ uri: `http://127.0.0.1:8000${latestGreenArticle.cover}` }} style={styles.popularImage} />
               <View style={styles.popularOverlay}>
-                <Text style={styles.popularTitle}>{firstArticles[0].title}</Text>
+                <Text style={styles.popularTitle}>{latestGreenArticle.title}</Text>
             </View>
           </TouchableOpacity>
       </View>
         </ImageBackground>
         <FlatList
-          data={firstArticles}
+          data={excludedArticles.slice(5)}
           renderItem={({ item }) => <TopicCard article={item} />}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.articleListContainer}
