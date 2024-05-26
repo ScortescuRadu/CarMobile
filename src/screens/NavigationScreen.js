@@ -5,6 +5,8 @@ import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
 import Spinner from 'react-native-spinkit';
+import NavigationOverlay from '../components/NavigationOverlay.js'
+import QrCodeScannerModal from '../components/QrCodeScannerModal.js';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -37,6 +39,8 @@ export default function NavigationScreen() {
     const [showRoutes, setShowRoutes] = useState(false);
     const [estimatedTime, setEstimatedTime] = useState(null);
     const [confirmPress, setConfirmPress] = useState(false);
+    const [levelNavigationVisibility, setLevelNavigationVisibility] = useState(false);
+    const [scannerVisible, setScannerVisible] = useState(false);
 
     useEffect(() => {
         // Get current location
@@ -140,6 +144,11 @@ export default function NavigationScreen() {
       setConfirmPress(true);
     };
 
+    const handleScanSuccess = (data) => {
+        Alert.alert('Scan Successful', `Scanned data: ${JSON.stringify(data)}`);
+        // Handle the response data here
+    };
+
     const fitMapToMarkers = (markers) => {
       mapViewRef.current.fitToCoordinates(markers, {
           edgePadding: {
@@ -154,6 +163,19 @@ export default function NavigationScreen() {
 
     return (
         <View style={styles.container}>
+            {levelNavigationVisibility && (
+                <NavigationOverlay
+                    visible={levelNavigationVisibility}
+                    onClose={() => setLevelNavigationVisibility(false)}
+                    currentLocation={currentLocation}
+                    selectedMarker={selectedMarker}
+                />
+            )}
+            <QrCodeScannerModal
+                visible={scannerVisible}
+                onClose={() => setScannerVisible(false)}
+                onScanSuccess={handleScanSuccess}
+            />
             {initialRegion && (
                 <MapView
                     ref={mapViewRef}  // Assign the reference to MapView
@@ -292,6 +314,14 @@ export default function NavigationScreen() {
                     <Text style={styles.extendSearchText}>Extend search</Text>
                 </TouchableOpacity>
             )}
+
+            <TouchableOpacity style={styles.roundButtonNavigation} onPress={() => setScannerVisible(true)}>
+                <Text style={styles.buttonText}>Scan Entrance</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.roundButtonQR} onPress={() => setLevelNavigationVisibility(true)}>
+                <Text style={styles.buttonText}>Level Navigation</Text>
+            </TouchableOpacity>
+
             {isLoading && (
                 <View style={styles.loadingOverlay}>
                     <Spinner isVisible={true} size={100} type="Circle" color="#FFF" />
@@ -336,6 +366,36 @@ export default function NavigationScreen() {
 }
 
 const styles = StyleSheet.create({
+    roundButtonNavigation: {
+        position: 'absolute',
+        bottom: 20,
+        left: 5,
+        backgroundColor: '#000',
+        borderRadius: 50,
+        width: 80,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2,
+        margin: 10,
+    },
+    roundButtonQR: {
+        position: 'absolute',
+        bottom: 20,
+        right: 5,
+        backgroundColor: '#000',
+        borderRadius: 50,
+        width: 80,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2,
+        margin: 10,
+    },
+    buttonText: {
+        color: '#fff',
+        textAlign: 'center',
+    },    
     container: {
         flex: 1,
     },
