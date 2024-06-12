@@ -80,7 +80,7 @@ export default function NavigationScreen() {
 
     const fetchNearbyParkingLots = async (latitude, longitude, distance) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/parking/radius-search/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
+            const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/parking/radius-search/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
             const data = await response.json();
             if (data.length > 0) {
                 setMarkers(data);

@@ -17,7 +17,7 @@ export default function CheckoutScreen() {
 
   const fetchCSRFToken = async () => {
       try {
-          const csrfResponse = await fetch('http://127.0.0.1:8000/payment/get-csrf-token/');
+          const csrfResponse = await fetch('https://frog-happy-uniformly.ngrok-free.app/payment/get-csrf-token/');
           const csrfData = await csrfResponse.json();
           const csrfToken = csrfData.csrf_token;
           return csrfToken;
@@ -43,7 +43,7 @@ export default function CheckoutScreen() {
       };
 
       try {
-          const response = await fetch(`http://127.0.0.1:8000/payment/payment-sheet/`, {
+          const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/payment/payment-sheet/`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export default function CheckoutScreen() {
   const fetchData = async () => {
       try {
           const token = await SInfo.getItem('authToken', {});
-          const response = await fetch('http://127.0.0.1:8000/parking-invoice/unpaid/', {
+          const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/parking-invoice/unpaid/', {
               method: 'GET',
               headers: {
                   'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ export default function CheckoutScreen() {
           console.log('OPTION:', selectedOption);
           const recentDays = calculateRecentDays(selectedOption);
           console.log('RECENT', recentDays);
-          const response = await fetch('http://127.0.0.1:8000/parking-invoice/paid/', {
+          const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/parking-invoice/paid/', {
               method: 'GET',
               headers: {
                   'Content-Type': 'application/json',

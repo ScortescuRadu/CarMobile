@@ -119,7 +119,7 @@ export default function Example() {
 
       const token = await SInfo.getItem('authToken', {});
 
-      const response = await fetch('http://127.0.0.1:8000/profile-picture/change/', {
+      const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/profile-picture/change/', {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -143,7 +143,7 @@ export default function Example() {
   const fetchProfilePicture = async () => {
     const token = await SInfo.getItem('authToken', {});
   
-    fetch('http://127.0.0.1:8000/profile-picture/display/', {
+    fetch('https://frog-happy-uniformly.ngrok-free.app/profile-picture/display/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export default function Example() {
   const fetchUserProfile = async () => {
       const token = await SInfo.getItem('authToken', {});
 
-      fetch('http://127.0.0.1:8000/user-profile/info/', {
+      fetch('https://frog-happy-uniformly.ngrok-free.app/user-profile/info/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
