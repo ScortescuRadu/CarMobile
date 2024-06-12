@@ -41,6 +41,10 @@
 	<string>App requires microphone access.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App requires photo library access.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to show you nearby parking lots.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>We need your location to show you nearby parking lots.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your usage description here</string>
 	<key>UIBackgroundModes</key>
