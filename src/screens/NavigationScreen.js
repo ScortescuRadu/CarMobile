@@ -49,8 +49,8 @@ export default function NavigationScreen() {
         Geolocation.getCurrentPosition(
             (position) => {
                 const currentLoc = {
-                    latitude: 45.7316656, // position.coords.latitude,
-                    longitude: 21.2489799, // position.coords.longitude,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
                 };
                 setInitialRegion({
                     ...currentLoc,
@@ -461,13 +461,16 @@ export default function NavigationScreen() {
                 </TouchableOpacity>
             )}
 
-            <TouchableOpacity style={styles.roundButtonNavigation} onPress={() => setScannerVisible(true)}>
-                <Text style={styles.buttonText}>Scan Entrance</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.roundButtonQR} onPress={() => setLevelNavigationVisibility(true)}>
-                <Text style={styles.buttonText}>Level Navigation</Text>
-            </TouchableOpacity>
-
+            {confirmPress && (
+                <TouchableOpacity style={styles.roundButtonNavigation} onPress={() => setScannerVisible(true)}>
+                    <Text style={styles.buttonText}>Scan Entrance</Text>
+                </TouchableOpacity>
+            )}
+            {confirmPress && (
+                <TouchableOpacity style={styles.roundButtonQR} onPress={() => setLevelNavigationVisibility(true)}>
+                    <Text style={styles.buttonText}>Level Navigation</Text>
+                </TouchableOpacity>
+            )}
             {isLoading && (
                 <View style={styles.loadingOverlay}>
                     <Spinner isVisible={true} size={100} type="Circle" color="#FFF" />
