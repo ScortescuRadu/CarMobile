@@ -1209,7 +1209,7 @@ PODS:
     - TOCropViewController
   - RNPermissions (4.1.5):
     - React-Core
-  - RNReanimated (3.6.2):
+  - RNReanimated (3.12.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1651,7 +1651,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: deda62b8339496ba721a45e0f3e2d7a319932cee
   RNImageCropPicker: d9616a0cb9b72e8551ff94a7a5021fbd29050aa5
   RNPermissions: 88cb833d70198c254e3ea7ccc4179fde91670700
-  RNReanimated: 5589be82dc26b3f94738eb7c6b1f942787532b25
+  RNReanimated: 60feb9b752e2cbe60bbb8d90da29672a81fa59b2
   RNScreens: b582cb834dc4133307562e930e8fa914b8c04ef2
   RNSensors: 117ba71c7eeeea0407ea0c0bb79e3495d602049b
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
