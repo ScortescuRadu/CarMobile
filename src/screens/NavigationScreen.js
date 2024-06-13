@@ -7,6 +7,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Spinner from 'react-native-spinkit';
 import NavigationOverlay from '../components/NavigationOverlay.js'
 import QrCodeScannerModal from '../components/QrCodeScannerModal.js';
+import CompassHeading from 'react-native-compass-heading';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -41,6 +42,7 @@ export default function NavigationScreen() {
     const [confirmPress, setConfirmPress] = useState(false);
     const [levelNavigationVisibility, setLevelNavigationVisibility] = useState(false);
     const [scannerVisible, setScannerVisible] = useState(false);
+    const [heading, setHeading] = useState(0);
 
     useEffect(() => {
         // Get current location
@@ -76,6 +78,31 @@ export default function NavigationScreen() {
             mapViewRef.current.animateToRegion(initialRegion, 1000);
         }
     }, [confirmPress, currentLocation, initialRegion]);
+
+    useEffect(() => {
+        const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
+        CompassHeading.start(degree_update_rate, ({ heading, accuracy }) => {
+            setHeading(heading); // Update the heading state
+            if (confirmPress) {
+                updateCameraHeading(heading); // Update the camera heading
+            }
+        });
+    
+        return () => {
+            CompassHeading.stop();
+        };
+    }, [confirmPress]);
+
+    const updateCameraHeading = (heading) => {
+        if (mapViewRef.current) {
+            mapViewRef.current.animateCamera({
+                heading: heading,
+                pitch: 0,
+                zoom: 18,
+                center: currentLocation
+            }, { duration: 500 });
+        }
+    };
 
     const handleMapPress = (event) => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -297,6 +324,9 @@ export default function NavigationScreen() {
                             latitudeDelta: 0.001,
                             longitudeDelta: 0.001,
                         }}
+                        rotateEnabled={true}
+                        // showsCompass={true}
+                        heading={heading}
                     >
                         {selectedLocation && (
                             <Marker coordinate={selectedLocation} pinColor="red">
@@ -321,11 +351,6 @@ export default function NavigationScreen() {
                                 <Callout>
                                     <View>
                                         <Text>Price: ${marker.price}</Text>
-                                        <TouchableOpacity onPress={() => {
-                                            if (!showRoutes) handleStartPress();
-                                        }} style={styles.startButton}>
-                                            <Text style={styles.startButtonText}>Select</Text>
-                                        </TouchableOpacity>
                                     </View>
                                 </Callout>
                             </Marker>
