@@ -10,11 +10,13 @@ const QrCodeScannerModal = ({ visible, onClose, userToken, onScanSuccess }) => {
 
     const onBarCodeRead = async (e) => {
         if (isScanning) return;
-
+    
         setIsScanning(true);
         const scannedData = e.data;
+        console.log('Scanned data:', scannedData); // Log the scanned data
+    
         try {
-            const response = await fetch('http://your-backend-url.com/api/scan', {
+            const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/api/scan', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -23,15 +25,17 @@ const QrCodeScannerModal = ({ visible, onClose, userToken, onScanSuccess }) => {
                 body: JSON.stringify({ scannedData })
             });
             const data = await response.json();
-            setIsScanning(false);
+            console.log('Response data:', data); // Log the response data
             if (response.ok) {
                 onScanSuccess(data);
                 onClose();
             } else {
+                setIsScanning(false); // Only reset isScanning if there was an error
                 Alert.alert('Error', data.message || 'An error occurred while processing your request.');
             }
         } catch (error) {
-            setIsScanning(false);
+            console.error('Error:', error); // Log the error
+            setIsScanning(false); // Only reset isScanning if there was an error
             if (!isScanning) {
                 Alert.alert('Error', 'An error occurred. Please try again.');
             }
@@ -48,7 +52,7 @@ const QrCodeScannerModal = ({ visible, onClose, userToken, onScanSuccess }) => {
             <View style={styles.container}>
                 <RNCamera
                     style={styles.camera}
-                    onBarCodeRead={onBarCodeRead}
+                    onBarCodeRead={!isScanning ? onBarCodeRead : undefined} // Disable barcode reading when isScanning is true
                     captureAudio={false}
                 >
                     <View style={styles.overlay}>
@@ -76,7 +80,7 @@ const QrCodeScannerModal = ({ visible, onClose, userToken, onScanSuccess }) => {
                 )}
             </View>
         </Modal>
-    );
+    );    
 };
 
 const styles = StyleSheet.create({
