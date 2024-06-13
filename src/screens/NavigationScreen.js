@@ -141,7 +141,16 @@ export default function NavigationScreen() {
     };
 
     const handleConfirmPress = () => {
-      setConfirmPress(true);
+        setConfirmPress(true);
+        mapViewRef.current.animateToRegion({
+            ...currentLocation,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        }, 1000);
+    };
+
+    const handleBackPress = () => {
+        setConfirmPress(false);
     };
 
     const handleScanSuccess = (data) => {
@@ -176,9 +185,9 @@ export default function NavigationScreen() {
                 onClose={() => setScannerVisible(false)}
                 onScanSuccess={handleScanSuccess}
             />
-            {initialRegion && (
+            {!confirmPress && initialRegion && (
                 <MapView
-                    ref={mapViewRef}  // Assign the reference to MapView
+                    ref={mapViewRef}
                     style={styles.map}
                     initialRegion={initialRegion}
                     onPress={handleMapPress}
@@ -258,6 +267,99 @@ export default function NavigationScreen() {
                     )}
                 </MapView>
             )}
+            {confirmPress && (
+                <>
+                    <MapView
+                        ref={mapViewRef}
+                        style={styles.mapReduced}
+                        showsUserLocation={true}
+                        initialRegion={initialRegion}
+                        region={{
+                            ...currentLocation,
+                            latitudeDelta: 0.005,
+                            longitudeDelta: 0.005,
+                        }}
+                    >
+                        {selectedLocation && (
+                            <Marker coordinate={selectedLocation} pinColor="red">
+                                <Callout>
+                                    <View>
+                                        <Text>Selected Destination</Text>
+                                    </View>
+                                </Callout>
+                            </Marker>
+                        )}
+                        {markers.map((marker, index) => (
+                            <Marker
+                                key={index}
+                                coordinate={{
+                                    latitude: marker.latitude,
+                                    longitude: marker.longitude,
+                                }}
+                                title={`Parking Lot ${marker.id}`}
+                                pinColor='green'
+                                onPress={() => handleMarkerPress(marker)}
+                            >
+                                <Callout>
+                                    <View>
+                                        <Text>Price: ${marker.price}</Text>
+                                        <TouchableOpacity onPress={() => {
+                                            if (!showRoutes) handleStartPress();
+                                        }} style={styles.startButton}>
+                                            <Text style={styles.startButtonText}>Select</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </Callout>
+                            </Marker>
+                        ))}
+                        {confirmPress && (
+                            <>
+                                <MapViewDirections
+                                    origin={currentLocation}
+                                    destination={selectedMarker}
+                                    apikey="AIzaSyDmT_iiMaICWSkmTykVj-mGdZpEPdIljwg"
+                                    strokeWidth={4}
+                                    strokeColor="blue"
+                                    mode="DRIVING"
+                                    onReady={(result) => {
+                                        setRouteCoordinates(result.coordinates);
+                                        setEstimatedTime(result.duration);
+                                        setDrivingRouteLoading(false);
+                                        fitMapToMarkers([currentLocation, selectedMarker, selectedLocation]);
+                                    }}
+                                    onError={(errorMessage) => {
+                                        console.log('Error fetching driving route:', errorMessage);
+                                        setDrivingRouteLoading(false);
+                                    }}
+                                />
+                                <MapViewDirections
+                                    origin={selectedMarker}
+                                    destination={selectedLocation}
+                                    apikey="AIzaSyDmT_iiMaICWSkmTykVj-mGdZpEPdIljwg"
+                                    strokeWidth={2}
+                                    strokeColor="green"
+                                    mode="WALKING"
+                                    lineDashPattern={[1, 5]}
+                                    onReady={(result) => {
+                                        setRouteCoordinates((prev) => [...prev, ...result.coordinates]);
+                                        setWalkingRouteLoading(false);
+                                    }}
+                                    onError={(errorMessage) => {
+                                        console.log('Error fetching walking route:', errorMessage);
+                                        setWalkingRouteLoading(false);
+                                    }}
+                                />
+                            </>
+                        )}
+                    </MapView>
+                    <View style={styles.redArea}>
+                        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+                            <Text style={styles.backButtonText}>Back</Text>
+                        </TouchableOpacity>
+                    </View>
+                </>
+            )}
+            {!confirmPress && (
             <View style={styles.searchContainer}>
                 <GooglePlacesAutocomplete
                     placeholder='Search'
@@ -309,6 +411,7 @@ export default function NavigationScreen() {
                     fetchDetails={true}
                 />
             </View>
+            )}
             {markers.length === 0 && selectedLocation && !isLoading && !showRoutes && (
                 <TouchableOpacity style={styles.extendSearchButton} onPress={extendSearch}>
                     <Text style={styles.extendSearchText}>Extend search</Text>
@@ -333,7 +436,7 @@ export default function NavigationScreen() {
                     <Text style={styles.loadingText}>Calculating route...</Text>
                 </View>
             )}
-            {showRoutes && (
+            {!confirmPress && showRoutes && (
                 <TouchableOpacity style={styles.stopButton} onPress={() => {
                     setShowRoutes(false);
                     setRouteCoordinates([]);
@@ -344,7 +447,7 @@ export default function NavigationScreen() {
                     <Text style={styles.stopButtonText}>X</Text>
                 </TouchableOpacity>
             )}
-            {showRoutes && (
+            {!confirmPress && showRoutes && (
                 <View style={styles.confirmBox}>
                     <Text style={styles.confirmBoxTitle}>Estimated Time: {Math.round(estimatedTime)} mins</Text>
                     <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmPress}>
@@ -502,4 +605,32 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontSize: 16,
   },
+    mapReduced: {
+        position: 'absolute',
+        top: '30%',
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    redArea: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '30%',
+        backgroundColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 80,
+        left: 10,
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 5,
+    },
+    backButtonText: {
+        color: 'black',
+    },
 });
