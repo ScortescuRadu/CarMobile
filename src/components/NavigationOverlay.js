@@ -4,9 +4,34 @@ import CompassHeading from 'react-native-compass-heading';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-const NavigationOverlay = ({ visible, onClose }) => {
+const getDistance = (currentLocation, destination) => {
+    console.log('diff',currentLocation, destination)
+    const toRadian = angle => (Math.PI / 180) * angle;
+    const distance = (a, b) => Math.sqrt(a * a + b * b);
+    const lat1 = currentLocation.latitude;
+    const lon1 = currentLocation.longitude;
+    const lat2 = destination.latitude;
+    const lon2 = destination.longitude;
+
+    const R = 6371e3; // meters
+    const φ1 = toRadian(lat1);
+    const φ2 = toRadian(lat2);
+    const Δφ = toRadian(lat2 - lat1);
+    const Δλ = toRadian(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const d = R * c;
+    return d; // in meters
+};
+
+const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) => {
     const [heading, setHeading] = useState(0);
     const rotationValue = useSharedValue(0);
+    const [distance, setDistance] = useState(0);
 
     useEffect(() => {
         const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
@@ -29,6 +54,15 @@ const NavigationOverlay = ({ visible, onClose }) => {
         }
     }, [heading]);
 
+    useEffect(() => {
+        console.log('coordinates:', currentLocation, destination)
+        if (currentLocation && destination) {
+            console.log('calculating')
+            const dist = getDistance(currentLocation, destination);
+            setDistance(dist);
+        }
+    }, [currentLocation, destination]);
+
     const arrowStyle = useAnimatedStyle(() => {
         return {
             transform: [
@@ -36,6 +70,12 @@ const NavigationOverlay = ({ visible, onClose }) => {
             ],
         };
     });
+
+    const getBackgroundColor = () => {
+        if (distance < 50) return '#2e6e15';
+        if (distance < 200) return '#f08811';
+        return '#e04655';
+    };
 
     return (
         <Modal
@@ -47,13 +87,14 @@ const NavigationOverlay = ({ visible, onClose }) => {
                 <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                     <Text style={styles.closeButtonText}>X</Text>
                 </TouchableOpacity>
-                <View style={styles.arrowContainer}>
+                <View style={[styles.rectangle, { backgroundColor: getBackgroundColor() }]}>
+                    <Text style={styles.title}>{distance.toFixed(2)} meters</Text>
                     <View style={styles.circle}>
                         <Animated.View style={[styles.arrow, arrowStyle]}>
                             <Icon
                                 name="arrow-up"
                                 size={100}
-                                color="red"
+                                color="black"
                             />
                         </Animated.View>
                     </View>
@@ -87,14 +128,24 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-    arrowContainer: {
+    rectangle: {
         justifyContent: 'center',
         alignItems: 'center',
+        width: 250,
+        height: 300,
+        borderRadius: 20,
+        padding: 20,
+    },
+    title: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
     circle: {
         width: 120,
         height: 120,
-        borderRadius: 60,
+        borderRadius:10,
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
