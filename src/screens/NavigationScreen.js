@@ -8,6 +8,7 @@ import Spinner from 'react-native-spinkit';
 import NavigationOverlay from '../components/NavigationOverlay.js'
 import QrCodeScannerModal from '../components/QrCodeScannerModal.js';
 import CompassHeading from 'react-native-compass-heading';
+import CameraProcessor from '../components/CameraProcessor.js';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -395,7 +396,8 @@ export default function NavigationScreen() {
                             </>
                         )}
                     </MapView>
-                    <View style={styles.redArea}>
+                    <View style={styles.cameraContainer}>
+                        <CameraProcessor />
                         <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
                             <Text style={styles.backButtonText}>Back</Text>
                         </TouchableOpacity>
@@ -658,13 +660,12 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
-    redArea: {
+    cameraContainer: {
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         height: '30%',
-        backgroundColor: 'red',
         justifyContent: 'center',
         alignItems: 'center',
     },
