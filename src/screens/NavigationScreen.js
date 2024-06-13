@@ -65,6 +65,18 @@ export default function NavigationScreen() {
         );
     }, []);
 
+    useEffect(() => {
+        if (confirmPress && currentLocation) {
+            mapViewRef.current.animateToRegion({
+                ...currentLocation,
+                latitudeDelta: 0.001,
+                longitudeDelta: 0.001,
+            }, 1000);
+        } else if (!confirmPress && initialRegion) {
+            mapViewRef.current.animateToRegion(initialRegion, 1000);
+        }
+    }, [confirmPress, currentLocation, initialRegion]);
+
     const handleMapPress = (event) => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
         if (!isCoordinateNearMarkers({ latitude, longitude }, markers, 0.001)) { // Adjust the threshold as needed
@@ -144,13 +156,18 @@ export default function NavigationScreen() {
         setConfirmPress(true);
         mapViewRef.current.animateToRegion({
             ...currentLocation,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
         }, 1000);
     };
 
     const handleBackPress = () => {
         setConfirmPress(false);
+        mapViewRef.current.animateToRegion({
+            ...currentLocation,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+        }, 1000);
     };
 
     const handleScanSuccess = (data) => {
@@ -191,6 +208,7 @@ export default function NavigationScreen() {
                     style={styles.map}
                     initialRegion={initialRegion}
                     onPress={handleMapPress}
+                    showsUserLocation={true}
                 >
                     {selectedLocation && (
                         <Marker coordinate={selectedLocation} pinColor="red">
@@ -276,8 +294,8 @@ export default function NavigationScreen() {
                         initialRegion={initialRegion}
                         region={{
                             ...currentLocation,
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005,
+                            latitudeDelta: 0.001,
+                            longitudeDelta: 0.001,
                         }}
                     >
                         {selectedLocation && (
@@ -325,7 +343,7 @@ export default function NavigationScreen() {
                                         setRouteCoordinates(result.coordinates);
                                         setEstimatedTime(result.duration);
                                         setDrivingRouteLoading(false);
-                                        fitMapToMarkers([currentLocation, selectedMarker, selectedLocation]);
+                                        // fitMapToMarkers([currentLocation, selectedMarker, selectedLocation]);
                                     }}
                                     onError={(errorMessage) => {
                                         console.log('Error fetching driving route:', errorMessage);
