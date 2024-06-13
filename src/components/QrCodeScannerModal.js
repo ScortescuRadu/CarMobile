@@ -43,7 +43,6 @@ const QrCodeScannerModal = ({ visible, onClose }) => {
             const data = await response.json();
             console.log('Response data:', data); // Log the response data
             if (response.ok) {
-                setIsScanning(false);
                 handleScanSuccess(data);
             } else {
                 setIsScanning(false); // Only reset isScanning if there was an error
@@ -59,6 +58,7 @@ const QrCodeScannerModal = ({ visible, onClose }) => {
     };
 
     const handleResultClose = () => {
+        setIsScanning(false);
         setScanResult(null);
         onClose();
     };
