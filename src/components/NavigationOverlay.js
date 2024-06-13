@@ -3,11 +3,10 @@ import { StyleSheet, View, Text, TouchableOpacity, Modal } from 'react-native';
 import CompassHeading from 'react-native-compass-heading';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 
 const getDistance = (currentLocation, destination) => {
-    console.log('diff',currentLocation, destination)
     const toRadian = angle => (Math.PI / 180) * angle;
-    const distance = (a, b) => Math.sqrt(a * a + b * b);
     const lat1 = currentLocation.latitude;
     const lon1 = currentLocation.longitude;
     const lat2 = destination.latitude;
@@ -31,7 +30,8 @@ const getDistance = (currentLocation, destination) => {
 const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) => {
     const [heading, setHeading] = useState(0);
     const rotationValue = useSharedValue(0);
-    const [distance, setDistance] = useState(0);
+    const [distance, setDistance] = useState(10.00);
+    const [altitudeDifference, setAltitudeDifference] = useState(0);
 
     useEffect(() => {
         const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
@@ -55,11 +55,14 @@ const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) =
     }, [heading]);
 
     useEffect(() => {
-        console.log('coordinates:', currentLocation, destination)
         if (currentLocation && destination) {
-            console.log('calculating')
             const dist = getDistance(currentLocation, destination);
             setDistance(dist);
+
+            if (currentLocation.altitude !== undefined && destination.altitude !== undefined) {
+                const altitudeDiff = destination.altitude - currentLocation.altitude;
+                setAltitudeDifference(altitudeDiff);
+            }
         }
     }, [currentLocation, destination]);
 
@@ -71,10 +74,16 @@ const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) =
         };
     });
 
-    const getBackgroundColor = () => {
-        if (distance < 50) return '#2e6e15';
-        if (distance < 200) return '#f08811';
-        return '#e04655';
+    const getGradientColors = () => {
+        if (distance < 50) return ['#76c485', '#32a852']; // Light green gradient
+        if (distance < 200) return ['#f2a25e', '#ffb12b']; // Light orange gradient
+        return ['#e88792', '#f0300e']; // Light red gradient
+    };
+
+    const getAltitudeText = () => {
+        if (altitudeDifference > 0) return "The destination is higher.";
+        if (altitudeDifference < 0) return "The destination is lower.";
+        return "The destination is at the same level.";
     };
 
     return (
@@ -87,7 +96,10 @@ const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) =
                 <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                     <Text style={styles.closeButtonText}>X</Text>
                 </TouchableOpacity>
-                <View style={[styles.rectangle, { backgroundColor: getBackgroundColor() }]}>
+                <LinearGradient
+                    colors={getGradientColors()}
+                    style={styles.rectangle}
+                >
                     <Text style={styles.title}>{distance.toFixed(2)} meters</Text>
                     <View style={styles.circle}>
                         <Animated.View style={[styles.arrow, arrowStyle]}>
@@ -98,7 +110,8 @@ const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) =
                             />
                         </Animated.View>
                     </View>
-                </View>
+                    <Text style={styles.altitudeText}>{getAltitudeText()}</Text>
+                </LinearGradient>
             </View>
         </Modal>
     );
@@ -132,7 +145,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: 250,
-        height: 300,
+        height: 350,
         borderRadius: 20,
         padding: 20,
     },
@@ -143,9 +156,9 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     circle: {
-        width: 120,
-        height: 120,
-        borderRadius:10,
+        width: 220,
+        height: 180,
+        borderRadius: 10,
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
@@ -153,6 +166,11 @@ const styles = StyleSheet.create({
     arrow: {
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    altitudeText: {
+        color: 'white',
+        fontSize: 16,
+        marginTop: 20,
     },
 });
 
