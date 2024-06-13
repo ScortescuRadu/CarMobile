@@ -145,8 +145,8 @@ export default function NavigationScreen() {
     };
 
     const handleScanSuccess = (data) => {
-        Alert.alert('Scan Successful', `Scanned data: ${JSON.stringify(data)}`);
-        // Handle the response data here
+        const { spot_description, hourly_price } = data;
+        Alert.alert('Welcome!', `Spot: ${spot_description}\nPrice: ${hourly_price}`);
     };
 
     const fitMapToMarkers = (markers) => {
