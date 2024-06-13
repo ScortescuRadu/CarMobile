@@ -28,6 +28,7 @@
     "react-native-address-autocomplete": "^0.4.1",
     "react-native-animated-math": "^0.3.1",
     "react-native-camera": "^4.2.1",
+    "react-native-compass-heading": "^1.5.0",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.15.0",
     "react-native-google-places-autocomplete": "^2.5.6",

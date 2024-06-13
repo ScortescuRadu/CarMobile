@@ -1,79 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Modal } from 'react-native';
-import { magnetometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
-import { map, filter } from 'rxjs/operators';
+import CompassHeading from 'react-native-compass-heading';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-setUpdateIntervalForType(SensorTypes.magnetometer, 100);
-
-const calculateBearing = (lat1, lon1, lat2, lon2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const toDeg = (value) => (value * 180) / Math.PI;
-
-    const dLon = toRad(lon2 - lat1);
-    const y = Math.sin(dLon) * Math.cos(toRad(lat2));
-    const x = Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) - Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(dLon);
-    const brng = toDeg(Math.atan2(y, x));
-    return (brng + 360) % 360; // Normalize to 0-360
-};
-
-const NavigationOverlay = ({ visible, onClose, currentLocation, selectedMarker }) => {
-    const [magnetometerData, setMagnetometerData] = useState({ x: 0, y: 0, z: 0 });
-    const [magnetometerAvailable, setMagnetometerAvailable] = useState(true);
+const NavigationOverlay = ({ visible, onClose }) => {
+    const [heading, setHeading] = useState(0);
     const rotationValue = useSharedValue(0);
 
     useEffect(() => {
-        let magnetometerSubscription;
-
-        try {
-            magnetometerSubscription = magnetometer
-                .pipe(
-                    filter((data) => data !== null),
-                    map(({ x, y, z }) => ({ x, y, z }))
-                )
-                .subscribe(
-                    data => {
-                        console.log('Magnetometer data:', data);
-                        setMagnetometerData(data);
-                    },
-                    (error) => {
-                        console.error('Magnetometer error:', error);
-                        setMagnetometerAvailable(false);
-                    }
-                );
-        } catch (error) {
-            console.error('Magnetometer not available:', error);
-            setMagnetometerAvailable(false);
-        }
+        const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
+        CompassHeading.start(degree_update_rate, (headingData) => {
+            const newHeading = headingData.heading;
+            console.log('Heading:', newHeading);
+            setHeading(newHeading); // Directly set the heading value
+        });
 
         return () => {
-            if (magnetometerSubscription) {
-                magnetometerSubscription.unsubscribe();
-            }
+            CompassHeading.stop();
         };
     }, []);
 
     useEffect(() => {
-        if (currentLocation && selectedMarker) {
-            const bearing = calculateBearing(currentLocation.latitude, currentLocation.longitude, selectedMarker.latitude, selectedMarker.longitude);
-            console.log('Calculated bearing:', bearing);
-            const rotation = getArrowRotation(magnetometerData, bearing);
-            console.log('Calculated rotation:', rotation);
-            rotationValue.value = withSpring(rotation, { stiffness: 300, damping: 20 });
+        if (!isNaN(heading)) {
+            const newRotation = heading % 360; // Normalize heading to 0-360 range
+            console.log('Updated heading:', heading, 'New rotation:', newRotation);
+            rotationValue.value = withTiming(newRotation, { duration: 500 });
         }
-    }, [magnetometerData, currentLocation, selectedMarker]);
-
-    const getArrowRotation = (magnetometer, bearing) => {
-        const { x, y } = magnetometer;
-        const angle = Math.atan2(y, x) * (180 / Math.PI);
-        const heading = (angle + 360) % 360; // Normalize to 0-360
-        console.log('Heading:', heading);
-        return (bearing - heading + 360) % 360; // Normalize to 0-360
-    };
+    }, [heading]);
 
     const arrowStyle = useAnimatedStyle(() => {
-        console.log('Updating arrow rotation to:', rotationValue.value);
         return {
             transform: [
                 { rotateZ: `${rotationValue.value}deg` },
@@ -101,9 +57,6 @@ const NavigationOverlay = ({ visible, onClose, currentLocation, selectedMarker }
                             />
                         </Animated.View>
                     </View>
-                    {!magnetometerAvailable && (
-                        <Text style={styles.warningText}>Magnetometer is not available on this device.</Text>
-                    )}
                 </View>
             </View>
         </Modal>
@@ -149,12 +102,6 @@ const styles = StyleSheet.create({
     arrow: {
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    warningText: {
-        marginTop: 20,
-        color: 'yellow',
-        fontSize: 16,
-        textAlign: 'center',
     },
 });
 

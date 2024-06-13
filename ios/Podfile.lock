@@ -996,6 +996,8 @@ PODS:
     - React-Core
   - react-native-camera/RN (4.2.1):
     - React-Core
+  - react-native-compass-heading (1.5.0):
+    - React-Core
   - react-native-geolocation (3.2.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1328,6 +1330,7 @@ DEPENDENCIES:
   - react-native-address-autocomplete (from `../node_modules/react-native-address-autocomplete`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-compass-heading (from `../node_modules/react-native-compass-heading`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -1476,6 +1479,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/blur"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-compass-heading:
+    :path: "../node_modules/react-native-compass-heading"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-picker:
@@ -1617,6 +1622,7 @@ SPEC CHECKSUMS:
   react-native-address-autocomplete: a60e37ce4f39c4b2359a4b7e8118f4623565b76b
   react-native-blur: 27113acc008facbc8accae5fb3a78b8424f64cfd
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
+  react-native-compass-heading: 1b4403d1c99dfd8311073ca8fc52bfc8e365cfac
   react-native-geolocation: 0ac6e11c1097d61b3836ab570c48c2bebb052604
   react-native-image-picker: 6c51359eca7a7df9f07e297218c25696eb9da976
   react-native-maps: 4c07b21deac3ac3579558956b63e288efb8725bb
