@@ -3,5 +3,6 @@ module.exports = {
   plugins: [
     'nativewind/babel',
     'react-native-reanimated/plugin',
+    'react-native-worklets-core/plugin'
   ],
 };

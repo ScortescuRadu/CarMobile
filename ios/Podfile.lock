@@ -998,6 +998,10 @@ PODS:
     - React-Core
   - react-native-compass-heading (1.5.0):
     - React-Core
+  - react-native-fast-tflite (1.2.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
   - react-native-geolocation (3.2.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1024,6 +1028,10 @@ PODS:
   - react-native-webview (13.8.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
+    - React-Core
+  - react-native-worklets-core (0.5.0):
+    - React
+    - React-callinvoker
     - React-Core
   - React-nativeconfig (0.73.3)
   - React-NativeModulesApple (0.73.3):
@@ -1266,10 +1274,16 @@ PODS:
     - StripeCore (= 23.21.1)
   - TOCropViewController (2.6.1)
   - Turf (2.6.1)
+  - vision-camera-resize-plugin (3.1.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
+    - VisionCamera
   - VisionCamera (3.9.2):
     - React
     - React-callinvoker
     - React-Core
+    - react-native-worklets-core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1333,6 +1347,7 @@ DEPENDENCIES:
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-compass-heading (from `../node_modules/react-native-compass-heading`)
+  - react-native-fast-tflite (from `../node_modules/react-native-fast-tflite`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-base64 (from `../node_modules/react-native-image-base64`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -1342,6 +1357,7 @@ DEPENDENCIES:
   - react-native-spinkit (from `../node_modules/react-native-spinkit`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
+  - react-native-worklets-core (from `../node_modules/react-native-worklets-core`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1373,6 +1389,7 @@ DEPENDENCIES:
   - RNSensors (from `../node_modules/react-native-sensors`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
+  - vision-camera-resize-plugin (from `../node_modules/vision-camera-resize-plugin`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1484,6 +1501,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-compass-heading:
     :path: "../node_modules/react-native-compass-heading"
+  react-native-fast-tflite:
+    :path: "../node_modules/react-native-fast-tflite"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-base64:
@@ -1502,6 +1521,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-video"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
+  react-native-worklets-core:
+    :path: "../node_modules/react-native-worklets-core"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1564,6 +1585,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   stripe-react-native:
     :path: "../node_modules/@stripe/stripe-react-native"
+  vision-camera-resize-plugin:
+    :path: "../node_modules/vision-camera-resize-plugin"
   VisionCamera:
     :path: "../node_modules/react-native-vision-camera"
   Yoga:
@@ -1628,6 +1651,7 @@ SPEC CHECKSUMS:
   react-native-blur: 27113acc008facbc8accae5fb3a78b8424f64cfd
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-compass-heading: 1b4403d1c99dfd8311073ca8fc52bfc8e365cfac
+  react-native-fast-tflite: 84a7f88f52fd954aa3860b8c7f97f08b1171ee8d
   react-native-geolocation: 0ac6e11c1097d61b3836ab570c48c2bebb052604
   react-native-image-base64: 2ff9ac788639c87a91361ab6652cc95e871b1e54
   react-native-image-picker: 6c51359eca7a7df9f07e297218c25696eb9da976
@@ -1637,6 +1661,7 @@ SPEC CHECKSUMS:
   react-native-spinkit: da294fd828216ad211fe36a5c14c1e09f09e62db
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-webview: 0f93dc8f4208ae5365884922c3cd14da5037ca4c
+  react-native-worklets-core: ba5a1d4f91be4edd8cf09537a9b8fa46a7f70436
   React-nativeconfig: 4d3076dc3dc498ec49819e4e4225b55d3507f902
   React-NativeModulesApple: 46f14baf36010b22ffd84fd89d5586e4148edfb3
   React-perflogger: 27ccacf853ba725524ef2b4e444f14e34d0837b0
@@ -1680,9 +1705,10 @@ SPEC CHECKSUMS:
   StripeUICore: 95c5235db01a2d90b5bb72c85a804eaed4e64f17
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
-  VisionCamera: 36c460338692788a0d377dce7d32f8ba049fb4f2
+  vision-camera-resize-plugin: 525763ad8f20ff9e58984ee4d5aceb50ec22ce4c
+  VisionCamera: 6c8ca7d04fc62fafccd8f8ad584e96f5303671f5
   Yoga: ff0382b894475dba0b4d2a5fda860bfee5a9afad
 
-PODFILE CHECKSUM: a3f4adae2318a078e4419d4344f98786b82b6214
+PODFILE CHECKSUM: 7b6dde8f5c1e7a770db9a0ac1ea4f172b1f1b740
 
 COCOAPODS: 1.15.2
