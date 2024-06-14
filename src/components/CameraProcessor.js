@@ -1,61 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Camera, useCameraDevices, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 
-const { width } = Dimensions.get('window');
-const cameraHeight = width * 0.5;
+const PermissionsPage = () => (
+  <View style={styles.container}>
+    <Text>Waiting for permissions</Text>
+  </View>
+);
 
-const CameraProcessor = () => {
-    const [isProcessing, setIsProcessing] = useState(false);
+const NoCameraDeviceError = () => (
+  <View style={styles.container}>
+    <Text>No Camera Device Found</Text>
+  </View>
+);
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await RNCamera.requestPermissionsAsync();
-            if (status !== 'granted') {
-                alert('Permission to access camera was denied');
-            }
-        })();
-    }, []);
-
-    const onBarCodeRead = async (e) => {
-        if (isProcessing) return;
-
-        setIsProcessing(true);
-        // Process barcode data...
-        setIsProcessing(false);
-    };
-
+const CameraScreen = () => {
+    const device = useCameraDevice('back')
+    const { hasPermission } = useCameraPermission()
+  
+    if (!hasPermission) return <PermissionsPage />
+    if (device == null) return <NoCameraDeviceError />
     return (
-        <View style={styles.container}>
-            <RNCamera
-                style={styles.camera}
-                onBarCodeRead={!isProcessing ? onBarCodeRead : undefined}
-                captureAudio={false}
-            />
-            {isProcessing && (
-                <View style={styles.loadingOverlay}>
-                    <ActivityIndicator size="large" color="#FFF" />
-                </View>
-            )}
-        </View>
-    );
+      <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true}
+      />
+    )
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: '100%',
-    },
-    camera: {
-        flex: 1,
-        height: cameraHeight,
-    },
-    loadingOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-});
+export default CameraScreen;
 
-export default CameraProcessor;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

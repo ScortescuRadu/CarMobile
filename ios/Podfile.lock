@@ -1002,6 +1002,8 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
+  - react-native-image-base64 (0.1.4):
+    - React
   - react-native-image-picker (7.1.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1264,7 +1266,7 @@ PODS:
     - StripeCore (= 23.21.1)
   - TOCropViewController (2.6.1)
   - Turf (2.6.1)
-  - VisionCamera (3.9.0):
+  - VisionCamera (3.9.2):
     - React
     - React-callinvoker
     - React-Core
@@ -1332,6 +1334,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-compass-heading (from `../node_modules/react-native-compass-heading`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
+  - react-native-image-base64 (from `../node_modules/react-native-image-base64`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1483,6 +1486,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-compass-heading"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
+  react-native-image-base64:
+    :path: "../node_modules/react-native-image-base64"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-maps:
@@ -1624,6 +1629,7 @@ SPEC CHECKSUMS:
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-compass-heading: 1b4403d1c99dfd8311073ca8fc52bfc8e365cfac
   react-native-geolocation: 0ac6e11c1097d61b3836ab570c48c2bebb052604
+  react-native-image-base64: 2ff9ac788639c87a91361ab6652cc95e871b1e54
   react-native-image-picker: 6c51359eca7a7df9f07e297218c25696eb9da976
   react-native-maps: 7b2c2cee95271592a92ba485eea1dec66a363a6e
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
@@ -1674,7 +1680,7 @@ SPEC CHECKSUMS:
   StripeUICore: 95c5235db01a2d90b5bb72c85a804eaed4e64f17
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
-  VisionCamera: 7a5c87805b13adaaa557132b44879ed1e1e39786
+  VisionCamera: 36c460338692788a0d377dce7d32f8ba049fb4f2
   Yoga: ff0382b894475dba0b4d2a5fda860bfee5a9afad
 
 PODFILE CHECKSUM: a3f4adae2318a078e4419d4344f98786b82b6214
