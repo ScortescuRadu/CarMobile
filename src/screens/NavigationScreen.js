@@ -59,6 +59,7 @@ export default function NavigationScreen() {
                     longitudeDelta: 0.0421,
                 });
                 setCurrentLocation(currentLoc);
+                fetchNearbyParkingLots(currentLoc.latitude, currentLoc.longitude, 1);
             },
             (error) => {
                 console.log(error);
@@ -120,19 +121,42 @@ export default function NavigationScreen() {
 
     const fetchNearbyParkingLots = async (latitude, longitude, distance) => {
         try {
-            const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/parking/radius-search/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
-            const data = await response.json();
-            if (data.length > 0) {
-                setMarkers(data);
+            // const parkingResponse = await fetch(`https://frog-happy-uniformly.ngrok-free-1.app/parking/radius-search/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
+            const parkingData = []// await parkingResponse.json();
+    
+            const scanResponse = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/scan/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
+            const scanData = await scanResponse.json();
+    
+            const combinedData = [
+                ...parkingData.map((item) => ({
+                    id: item.id,
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                    price: item.price,
+                    type: 'parkingLot',
+                })),
+                ...scanData.map((item) => ({
+                    id: item.id,
+                    latitude: item.lat,
+                    longitude: item.lng,
+                    name: item.name,
+                    is_reserved: item.is_reserved,
+                    is_occupied: item.is_occupied,
+                    type: 'scanMarker',
+                })),
+            ];
+    
+            if (combinedData.length > 0) {
+                setMarkers(combinedData);
                 return true;
             } else {
                 setMarkers([]); // Clear markers if no data is returned
             }
         } catch (error) {
-            console.error('Error fetching nearby parking lots:', error);
+            console.error('Error fetching nearby parking lots or scanned locations:', error);
         }
         return false;
-    };
+    };    
 
     const handleMarkerPress = (marker) => {
       if (!showRoutes) {
@@ -254,18 +278,41 @@ export default function NavigationScreen() {
                                 latitude: marker.latitude,
                                 longitude: marker.longitude,
                             }}
-                            title={`Parking Lot ${marker.id}`}
-                            pinColor='green'
+                            title={
+                                marker.type === 'parkingLot'
+                                    ? `Parking Lot ${marker.id}`
+                                    : `Marker ${marker.name}`
+                            }
+                            pinColor={
+                                marker.type === 'parkingLot' ? 'blue' :
+                                marker.is_occupied ? 'red' :
+                                marker.is_reserved ? 'yellow' :
+                                'green'
+                            }
                             onPress={() => handleMarkerPress(marker)}
                         >
                             <Callout>
                                 <View>
-                                    <Text>Price: ${marker.price}</Text>
-                                    <TouchableOpacity onPress={() => {
-                                        if (!showRoutes) handleStartPress();
-                                    }} style={styles.startButton}>
-                                        <Text style={styles.startButtonText}>Select</Text>
-                                    </TouchableOpacity>
+                                    {marker.type === 'parkingLot' ? (
+                                        <>
+                                            <Text>Price: ${marker.price}</Text>
+                                            <TouchableOpacity onPress={() => {
+                                                if (!showRoutes) handleStartPress();
+                                                }} style={styles.startButton}>
+                                                <Text style={styles.startButtonText}>Select</Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Text>Reserved: {marker.is_reserved ? 'Yes' : 'No'}</Text>
+                                            <Text>Occupied: {marker.is_occupied ? 'Yes' : 'No'}</Text>
+                                            <TouchableOpacity onPress={() => {
+                                                if (!showRoutes) handleStartPress();
+                                                }} style={styles.startButton}>
+                                                <Text style={styles.startButtonText}>Select</Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    )}
                                 </View>
                             </Callout>
                         </Marker>
@@ -345,13 +392,31 @@ export default function NavigationScreen() {
                                     latitude: marker.latitude,
                                     longitude: marker.longitude,
                                 }}
-                                title={`Parking Lot ${marker.id}`}
-                                pinColor='green'
+                                title={
+                                    marker.type === 'parkingLot'
+                                        ? `Parking Lot ${marker.id}`
+                                        : `Marker ${marker.name}`
+                                }
+                                pinColor={
+                                    marker.type === 'parkingLot' ? 'blue' :
+                                    marker.is_occupied ? 'red' :
+                                    marker.is_reserved ? 'yellow' :
+                                    'green'
+                                }
                                 onPress={() => handleMarkerPress(marker)}
                             >
                                 <Callout>
                                     <View>
-                                        <Text>Price: ${marker.price}</Text>
+                                        {marker.type === 'parkingLot' ? (
+                                            <>
+                                                <Text>Price: ${marker.price}</Text>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Text>Reserved: {marker.is_reserved ? 'Yes' : 'No'}</Text>
+                                                <Text>Occupied: {marker.is_occupied ? 'Yes' : 'No'}</Text>
+                                            </>
+                                        )}
                                     </View>
                                 </Callout>
                             </Marker>
