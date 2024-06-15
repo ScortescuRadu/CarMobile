@@ -48,6 +48,7 @@ export default function NavigationScreen() {
     const [heading, setHeading] = useState(0);
     const [isFinishModalVisible, setIsModalVisible] = useState(false);
     const [savedMarker, setSavedMarker] = useState(null);
+    const [reservedMarker, setReservedMarker] = useState(null);
 
     useEffect(() => {
         // Get current location
@@ -102,6 +103,52 @@ export default function NavigationScreen() {
     useEffect(() => {
         getSavedMarker();
     }, []);
+
+    useEffect(() => {
+        if (confirmPress) {
+            console.log('Polling started because confirmPress is true');
+            const interval = setInterval(async () => {
+                if (reservedMarker) {
+                    try {
+                        console.log(`Polling marker status for marker ID: ${reservedMarker}`);
+                        const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/status/${reservedMarker.id}/`);
+                        const data = await response.json();
+                        console.log('Polled data:', data);
+                        if (data.is_occupied) {
+                            Alert.alert('Notification', 'Your reserved spot is now occupied. Redirecting to the closest available spot.');
+                            const closestResponse = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/closest-available/?lat=${reservedMarker.latitude}&lng=${reservedMarker.longitude}`);
+                            const closestMarker = await closestResponse.json();
+                            console.log('Closest marker data:', closestMarker);
+                            if (closestMarker) {
+                                setReservedMarker({
+                                    id: closestMarker.id,
+                                    latitude: closestMarker.lat,
+                                    longitude: closestMarker.lng,
+                                });
+                                setSelectedMarker({
+                                    id: closestMarker.id,
+                                    latitude: closestMarker.lat,
+                                    longitude: closestMarker.lng,
+                                    is_reserved: closestMarker.is_reserved,
+                                    is_occupied: closestMarker.is_occupied,
+                                    name: closestMarker.name,
+                                    type: 'scanMarker'
+                                });
+                            } else {
+                                Alert.alert('Notification', 'No available spots nearby.');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error polling marker status:', error);
+                    }
+                }
+            }, POLLING_INTERVAL);
+    
+            return () => clearInterval(interval);
+        } else {
+            console.log('Polling not started because confirmPress is false');
+        }
+    }, [confirmPress, reservedMarker]);    
 
     const updateCameraHeading = (heading) => {
         if (mapViewRef.current) {
@@ -164,11 +211,18 @@ export default function NavigationScreen() {
             console.error('Error fetching nearby parking lots or scanned locations:', error);
         }
         return false;
-    };    
+    };
 
     const handleMarkerPress = (marker) => {
       if (!showRoutes) {
         setSelectedMarker(marker);
+        if (confirmPress) {
+            setReservedMarker({
+                id: marker.id,
+                latitude: marker.latitude,
+                longitude: marker.longitude,
+            });
+        }
       }
     };
 
@@ -232,6 +286,11 @@ export default function NavigationScreen() {
                             m.id === selectedMarker.id ? { ...m, is_reserved: true } : m
                         )
                     );
+                    setReservedMarker({
+                        id: selectedMarker.id,
+                        latitude: selectedMarker.latitude,
+                        longitude: selectedMarker.longitude,
+                    });
                 } else {
                     Alert.alert('Error', data.error || 'Failed to reserve marker');
                     return;
@@ -436,6 +495,8 @@ export default function NavigationScreen() {
             console.error('Error retrieving marker:', error);
         }
     };
+
+    const POLLING_INTERVAL = 5000; // 5 seconds
 
     return (
         <View style={styles.container}>
