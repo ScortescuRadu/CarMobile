@@ -1018,6 +1018,12 @@ PODS:
     - React-Core
   - react-native-sensitive-info (5.5.8):
     - React
+  - react-native-skia (1.3.6):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React
+    - React-callinvoker
+    - React-Core
   - react-native-spinkit (1.4.1):
     - React
   - react-native-video (5.2.1):
@@ -1232,7 +1238,7 @@ PODS:
     - React-Core
   - RNSensors (7.3.6):
     - React-Core
-  - RNSVG (14.1.0):
+  - RNSVG (14.2.0):
     - React-Core
   - SocketRocket (0.6.1)
   - Solar-dev (3.0.1)
@@ -1354,6 +1360,7 @@ DEPENDENCIES:
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-sensitive-info (from `../node_modules/react-native-sensitive-info`)
+  - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - react-native-spinkit (from `../node_modules/react-native-spinkit`)
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -1515,6 +1522,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-sensitive-info:
     :path: "../node_modules/react-native-sensitive-info"
+  react-native-skia:
+    :path: "../node_modules/@shopify/react-native-skia"
   react-native-spinkit:
     :path: "../node_modules/react-native-spinkit"
   react-native-video:
@@ -1658,6 +1667,7 @@ SPEC CHECKSUMS:
   react-native-maps: 7b2c2cee95271592a92ba485eea1dec66a363a6e
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-sensitive-info: 400c6e3d27945e15c8cddb5b4b92233c85ee06f8
+  react-native-skia: ec07ed8b8e616fa10307db2c9105097c1303709b
   react-native-spinkit: da294fd828216ad211fe36a5c14c1e09f09e62db
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-webview: 0f93dc8f4208ae5365884922c3cd14da5037ca4c
@@ -1691,7 +1701,7 @@ SPEC CHECKSUMS:
   RNReanimated: 60feb9b752e2cbe60bbb8d90da29672a81fa59b2
   RNScreens: b582cb834dc4133307562e930e8fa914b8c04ef2
   RNSensors: 117ba71c7eeeea0407ea0c0bb79e3495d602049b
-  RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
+  RNSVG: 963a95f1f5d512a13d11ffd50d351c87fb5c6890
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Solar-dev: 4612dc9878b9fed2667d23b327f1d4e54e16e8d0
   Stripe: d55e7338dabc599eddeee3b09eacd5c13457e1a2

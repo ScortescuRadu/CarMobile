@@ -4,7 +4,7 @@ const defaultConfig = getDefaultConfig(__dirname);
 
 // Add the '.tflite' extension to the assetExts
 defaultConfig.resolver.assetExts.push('tflite');
-
+defaultConfig.resolver.assetExts.push('lite');
 /**
  * Metro configuration
  * https://facebook.github.io/metro/docs/configuration
