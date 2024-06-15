@@ -204,8 +204,36 @@ export default function NavigationScreen() {
         });
     };
 
-    const handleConfirmPress = () => {
+    const handleConfirmPress = async () => {
         setConfirmPress(true);
+        if (selectedMarker && selectedMarker.type !== 'parkingLot') {
+            try {
+                const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/reserve-marker/${selectedMarker.id}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: selectedMarker.id }),
+                });
+                const data = await response.json();
+    
+                if (response.ok) {
+                    // Alert.alert('Success', 'Marker reserved successfully');
+                    setMarkers((prevMarkers) =>
+                        prevMarkers.map((m) =>
+                            m.id === selectedMarker.id ? { ...m, is_reserved: true } : m
+                        )
+                    );
+                } else {
+                    Alert.alert('Error', data.error || 'Failed to reserve marker');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error reserving marker:', error);
+                Alert.alert('Error', 'Failed to reserve marker');
+                return;
+            }
+        }
         mapViewRef.current.animateToRegion({
             ...currentLocation,
             latitudeDelta: 0.001,
@@ -213,8 +241,36 @@ export default function NavigationScreen() {
         }, 1000);
     };
 
-    const handleBackPress = () => {
+    const handleBackPress = async () => {
         setConfirmPress(false);
+        if (selectedMarker && selectedMarker.type !== 'parkingLot') {
+            try {
+                const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/cancel-reservation/${selectedMarker.id}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                });
+                const data = await response.json();
+    
+                if (response.ok) {
+                    // Alert.alert('Success', 'Marker reservation canceled successfully');
+                    setMarkers((prevMarkers) =>
+                        prevMarkers.map((m) =>
+                            m.id === selectedMarker.id ? { ...m, is_reserved: false } : m
+                        )
+                    );
+                } else {
+                    Alert.alert('Error', data.error || 'Failed to cancel marker reservation');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error canceling marker reservation:', error);
+                Alert.alert('Error', 'Failed to cancel marker reservation');
+                return;
+            }
+        }
         mapViewRef.current.animateToRegion({
             ...currentLocation,
             latitudeDelta: 0.0922,
@@ -306,11 +362,13 @@ export default function NavigationScreen() {
                                         <>
                                             <Text>Reserved: {marker.is_reserved ? 'Yes' : 'No'}</Text>
                                             <Text>Occupied: {marker.is_occupied ? 'Yes' : 'No'}</Text>
-                                            <TouchableOpacity onPress={() => {
-                                                if (!showRoutes) handleStartPress();
-                                                }} style={styles.startButton}>
-                                                <Text style={styles.startButtonText}>Select</Text>
-                                            </TouchableOpacity>
+                                            {!marker.is_reserved && (
+                                                <TouchableOpacity onPress={() => {
+                                                    if (!showRoutes) handleStartPress();
+                                                    }} style={styles.startButton}>
+                                                    <Text style={styles.startButtonText}>Select</Text>
+                                                </TouchableOpacity>
+                                            )}
                                         </>
                                     )}
                                 </View>
