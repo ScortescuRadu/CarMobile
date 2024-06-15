@@ -283,6 +283,46 @@ export default function NavigationScreen() {
         Alert.alert('Welcome!', `Spot: ${spot_description}\nPrice: ${hourly_price}`);
     };
 
+    const handleAddMarkerPress = async () => {
+        if (!currentLocation) return;
+    
+        try {
+            const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/marker/add-marker/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lat: currentLocation.latitude,
+                    lng: currentLocation.longitude,
+                    name: 'New Marker',
+                }),
+            });
+            const data = await response.json();
+    
+            if (response.ok) {
+                // Alert.alert('Success', 'Marker added successfully');
+                setMarkers((prevMarkers) => [
+                    ...prevMarkers,
+                    {
+                        id: data.id,
+                        latitude: data.lat,
+                        longitude: data.lng,
+                        name: data.name,
+                        is_reserved: false,
+                        is_occupied: false,
+                        type: 'scanMarker',
+                    },
+                ]);
+            } else {
+                Alert.alert('Error', data.error || 'Failed to add marker');
+            }
+        } catch (error) {
+            console.error('Error adding marker:', error);
+            Alert.alert('Error', 'Failed to add marker');
+        }
+    };
+
     const fitMapToMarkers = (markers) => {
       mapViewRef.current.fitToCoordinates(markers, {
           edgePadding: {
@@ -522,7 +562,7 @@ export default function NavigationScreen() {
                     <View style={styles.cameraContainer}>
                         <CameraProcessor />
                         <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-                            <Text style={styles.backButtonText}>Back</Text>
+                            <Text style={styles.backButtonText}>Stop Trip</Text>
                         </TouchableOpacity>
                     </View>
                 </>
@@ -594,6 +634,14 @@ export default function NavigationScreen() {
             {confirmPress && (
                 <TouchableOpacity style={styles.roundButtonQR} onPress={() => setLevelNavigationVisibility(true)}>
                     <Text style={styles.buttonText}>Level Navigation</Text>
+                </TouchableOpacity>
+            )}
+            {confirmPress && (
+                <TouchableOpacity 
+                    style={styles.addMarkerButton} 
+                    onPress={handleAddMarkerPress}
+                >
+                    <Text>Free Spot</Text>
                 </TouchableOpacity>
             )}
             {isLoading && (
@@ -802,5 +850,17 @@ const styles = StyleSheet.create({
     },
     backButtonText: {
         color: 'black',
+    },
+    addMarkerButton: {
+        position: 'absolute',
+        bottom: '6%',
+        left: '38%',
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 2,
     },
 });
