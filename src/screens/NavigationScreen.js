@@ -9,6 +9,8 @@ import NavigationOverlay from '../components/NavigationOverlay.js'
 import QrCodeScannerModal from '../components/QrCodeScannerModal.js';
 import CompassHeading from 'react-native-compass-heading';
 import CameraProcessor from '../components/CameraProcessor.js';
+import Modal from 'react-native-modal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -44,6 +46,8 @@ export default function NavigationScreen() {
     const [levelNavigationVisibility, setLevelNavigationVisibility] = useState(false);
     const [scannerVisible, setScannerVisible] = useState(false);
     const [heading, setHeading] = useState(0);
+    const [isFinishModalVisible, setIsModalVisible] = useState(false);
+    const [savedMarker, setSavedMarker] = useState(null);
 
     useEffect(() => {
         // Get current location
@@ -94,6 +98,10 @@ export default function NavigationScreen() {
             CompassHeading.stop();
         };
     }, [confirmPress]);
+
+    useEffect(() => {
+        getSavedMarker();
+    }, []);
 
     const updateCameraHeading = (heading) => {
         if (mapViewRef.current) {
@@ -243,6 +251,7 @@ export default function NavigationScreen() {
 
     const handleBackPress = async () => {
         setConfirmPress(false);
+        console.log('Stop Trip button pressed');
         if (selectedMarker && selectedMarker.type !== 'parkingLot') {
             try {
                 const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/cancel-reservation/${selectedMarker.id}/`, {
@@ -255,7 +264,7 @@ export default function NavigationScreen() {
                 const data = await response.json();
     
                 if (response.ok) {
-                    // Alert.alert('Success', 'Marker reservation canceled successfully');
+                    console.log('Marker reservation canceled successfully');
                     setMarkers((prevMarkers) =>
                         prevMarkers.map((m) =>
                             m.id === selectedMarker.id ? { ...m, is_reserved: false } : m
@@ -271,6 +280,79 @@ export default function NavigationScreen() {
                 return;
             }
         }
+        console.log(currentLocation, selectedLocation)
+        if (currentLocation && selectedLocation) {
+            console.log('calculating distance')
+            const distance = getDistanceFromLatLonInMeters(currentLocation, selectedLocation);
+            console.log('Distance from destination:', distance);
+    
+            if (distance > 10) {
+                setIsModalVisible(true);
+                console.log('Showing modal for parking confirmation');
+            } else {
+                mapViewRef.current.animateToRegion({
+                    ...currentLocation,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }, 1000);
+                console.log('No need for modal, moving back to initial region');
+            }
+        } else {
+            console.log('currentLocation or selectedLocation is null:', currentLocation, selectedLocation);
+            mapViewRef.current.animateToRegion({
+                ...initialRegion,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            }, 1000);
+        }
+    };
+
+    const getDistanceFromLatLonInMeters = (location1, location2) => {
+        const R = 6371; // Radius of the Earth in km
+        const dLat = deg2rad(location2.latitude - location1.latitude);
+        const dLon = deg2rad(location2.longitude - location1.longitude);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(location1.latitude)) * Math.cos(deg2rad(location2.latitude)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c * 1000; // Distance in meters
+        return distance;
+    };
+    
+    const deg2rad = (deg) => {
+        return deg * (Math.PI / 180);
+    };
+
+    const handleModalYes = async () => {
+        setIsModalVisible(false);
+        try {
+            const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/marker/add-marker/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    latitude: currentLocation.latitude,
+                    longitude: currentLocation.longitude,
+                    is_occupied: true,
+                }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                await saveMarker(data);
+                Alert.alert('Marker added successfully');
+            } else {
+                Alert.alert('Error', data.error || 'Failed to add marker');
+            }
+        } catch (error) {
+            console.error('Error adding marker:', error);
+            Alert.alert('Error', 'Failed to add marker');
+        }
+    };
+    
+    const handleModalNo = () => {
+        setIsModalVisible(false);
         mapViewRef.current.animateToRegion({
             ...currentLocation,
             latitudeDelta: 0.0922,
@@ -335,6 +417,26 @@ export default function NavigationScreen() {
       });
     };
 
+    const saveMarker = async (marker) => {
+        try {
+            await AsyncStorage.setItem('savedMarker', JSON.stringify(marker));
+            setSavedMarker(marker);
+        } catch (error) {
+            console.error('Error saving marker:', error);
+        }
+    };
+    
+    const getSavedMarker = async () => {
+        try {
+            const marker = await AsyncStorage.getItem('savedMarker');
+            if (marker !== null) {
+                setSavedMarker(JSON.parse(marker));
+            }
+        } catch (error) {
+            console.error('Error retrieving marker:', error);
+        }
+    };
+
     return (
         <View style={styles.container}>
             {levelNavigationVisibility && (
@@ -350,6 +452,17 @@ export default function NavigationScreen() {
                 onClose={() => setScannerVisible(false)}
                 onScanSuccess={handleScanSuccess}
             />
+            <Modal isVisible={isFinishModalVisible}>
+                <View style={styles.modalContent}>
+                    <Text>Did you park in a public space?</Text>
+                    <TouchableOpacity onPress={handleModalYes} style={styles.modalButton}>
+                        <Text style={styles.modalButtonText}>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleModalNo} style={styles.modalButton}>
+                        <Text style={styles.modalButtonText}>No</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
             {!confirmPress && initialRegion && (
                 <MapView
                     ref={mapViewRef}
@@ -457,6 +570,18 @@ export default function NavigationScreen() {
                         </>
                     )}
                 </MapView>
+            )}
+            {!confirmPress && savedMarker && (
+                <TouchableOpacity style={styles.savedMarkerButton} onPress={() => {
+                    mapViewRef.current.animateToRegion({
+                        latitude: savedMarker.lat,
+                        longitude: savedMarker.lng,
+                        latitudeDelta: 0.005,
+                        longitudeDelta: 0.005,
+                    }, 1000);
+                }}>
+                    <Text style={styles.buttonText}>My Car</Text>
+                </TouchableOpacity>
             )}
             {confirmPress && (
                 <>
@@ -862,5 +987,32 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 2,
+    },
+    savedMarkerButton: {
+        position: 'absolute',
+        bottom: 30,
+        right: 15,
+        backgroundColor: '#000',
+        borderRadius: 50,
+        width: 80,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2,
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalButton: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    modalButtonText: {
+        color: 'white',
     },
 });

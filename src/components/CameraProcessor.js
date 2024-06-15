@@ -74,13 +74,16 @@ const CameraScreen = () => {
   if (!device) return <NoCameraDeviceError />;
 
   return (
-    <Camera
-      style={StyleSheet.absoluteFill}
-      device={device}
-      isActive={true}
-      frameProcessor={frameProcessor}
-      frameProcessorFps={1}
-    />
+    // <Camera
+    //   style={StyleSheet.absoluteFill}
+    //   device={device}
+    //   isActive={true}
+    //   frameProcessor={frameProcessor}
+    //   frameProcessorFps={1}
+    // />
+    <Text>
+      a
+    </Text>
   );
 };
 
