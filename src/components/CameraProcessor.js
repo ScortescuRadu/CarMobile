@@ -4,6 +4,7 @@ import { Camera, useCameraDevice, useFrameProcessor } from 'react-native-vision-
 import { createResizePlugin } from 'vision-camera-resize-plugin';
 import { useTensorflowModel } from 'react-native-fast-tflite';
 import 'react-native-reanimated';
+import { Worklets } from 'react-native-worklets-core';
 
 const PermissionsPage = () => (
   <View style={styles.container}>
@@ -20,16 +21,37 @@ const NoCameraDeviceError = () => (
 const CameraScreen = () => {
   const device = useCameraDevice('back');
   const [hasPermission, setHasPermission] = useState(false);
+  const [detections, setDetections] = useState([]);
   const objectDetection = useTensorflowModel(require('../assets/model/1.tflite'));
   const model = objectDetection.state === "loaded" ? objectDetection.model : undefined;
 
   const { resize } = createResizePlugin();
 
+  const processDetections = (boxes, classes, scores, numDetections) => {
+    const detections = [];
+    for (let i = 0; i < numDetections[0]; i++) {
+      if (scores[i] > 0.7) {
+        detections.push({
+          box: {
+            left: boxes[i * 4],
+            top: boxes[i * 4 + 1],
+            right: boxes[i * 4 + 2],
+            bottom: boxes[i * 4 + 3],
+          },
+          class: classes[i],
+          score: scores[i],
+        });
+      }
+    }
+    setDetections(detections);
+  };
+
+  const myFunctionJS = Worklets.createRunInJsFn(processDetections);
+
   const frameProcessor = useFrameProcessor((frame) => {
     'worklet';
     if (model == null) return;
 
-    // Resize the frame to 300x300 to match the model's expected input size
     const resized = resize(frame, {
       scale: {
         width: 300,
@@ -39,27 +61,14 @@ const CameraScreen = () => {
       dataType: 'uint8'
     });
 
-    // Run the model with the resized input buffer
     const outputs = model.runSync([resized]);
 
-    // Interpret outputs accordingly
     const detection_boxes = outputs[0];
     const detection_classes = outputs[1];
     const detection_scores = outputs[2];
     const num_detections = outputs[3];
-    console.log(`Detected ${num_detections[0]} objects!`);
 
-    for (let i = 0; i < detection_boxes.length; i += 4) {
-      const confidence = detection_scores[i / 4];
-      if (confidence > 0.7) {
-        // Log the detected object details
-        const left = detection_boxes[i];
-        const top = detection_boxes[i + 1];
-        const right = detection_boxes[i + 2];
-        const bottom = detection_boxes[i + 3];
-        console.log(`Detected object at [${left}, ${top}, ${right}, ${bottom}] with confidence ${confidence}`);
-      }
-    }
+    myFunctionJS(detection_boxes, detection_classes, detection_scores, num_detections);
   }, [model]);
 
   useEffect(() => {
@@ -74,16 +83,22 @@ const CameraScreen = () => {
   if (!device) return <NoCameraDeviceError />;
 
   return (
-    // <Camera
-    //   style={StyleSheet.absoluteFill}
-    //   device={device}
-    //   isActive={true}
-    //   frameProcessor={frameProcessor}
-    //   frameProcessorFps={1}
-    // />
-    <Text>
-      a
-    </Text>
+    <View style={styles.container}>
+      <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true}
+        frameProcessor={frameProcessor}
+        frameProcessorFps={1}
+      />
+      <View style={styles.detectionsContainer}>
+        {detections.map((detection, index) => (
+          <Text key={index} style={styles.detectionText}>
+            Detected object at [{detection.box.left.toFixed(2)}, {detection.box.top.toFixed(2)}, {detection.box.right.toFixed(2)}, {detection.box.bottom.toFixed(2)}] with confidence {detection.score.toFixed(2)}
+          </Text>
+        ))}
+      </View>
+    </View>
   );
 };
 
@@ -94,5 +109,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  camera: {
+    flex: 1,
+    width: '100%',
+  },
+  detectionsContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
+  },
+  detectionText: {
+    color: 'white',
+    fontSize: 14,
+    marginVertical: 2,
   },
 });
