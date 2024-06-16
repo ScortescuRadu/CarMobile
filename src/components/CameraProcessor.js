@@ -84,7 +84,7 @@ const CameraScreen = () => {
   if (!device) return <NoCameraDeviceError />;
 
   return (
-    // <View style={styles.container}>
+    <>
       <Camera
         style={StyleSheet.absoluteFillObject}
         device={device}
@@ -92,14 +92,14 @@ const CameraScreen = () => {
         frameProcessor={frameProcessor}
         frameProcessorFps={1}
       />
-    //   <View style={styles.detectionsContainer}>
-    //     {detections.map((detection, index) => (
-    //       <Text key={index} style={styles.detectionText}>
-    //         Detected object at [{detection.box.left.toFixed(2)}, {detection.box.top.toFixed(2)}, {detection.box.right.toFixed(2)}, {detection.box.bottom.toFixed(2)}] with confidence {detection.score.toFixed(2)}
-    //       </Text>
-    //     ))}
-    //   </View>
-    // </View>
+      <View style={styles.detectionsContainer}>
+         {detections.map((detection, index) => (
+          <Text key={index} style={styles.detectionText}>
+            Detected object at [{detection.box.left.toFixed(2)}, {detection.box.top.toFixed(2)}, {detection.box.right.toFixed(2)}, {detection.box.bottom.toFixed(2)}] with confidence {detection.score.toFixed(2)}
+          </Text>
+        ))}
+      </View>
+      </>
   );
 };
 
