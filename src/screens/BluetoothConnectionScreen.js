@@ -11,7 +11,7 @@ const BluetoothConnectionScreen = () => {
   const navigation = useNavigation();
   const [devices, setDevices] = useState([]);
   const [scanning, setScanning] = useState(false);
-  const { setConnectedDevice } = useContext(BluetoothContext);
+  const { connectedDevice, setConnectedDevice } = useContext(BluetoothContext);
 
   useEffect(() => {
     console.log('Initializing BleManager...');
@@ -38,16 +38,25 @@ const BluetoothConnectionScreen = () => {
       setScanning(false);
     };
 
+    const handleDisconnectedPeripheral = (data) => {
+      console.log('Disconnected from', data.peripheral);
+      Alert.alert('Disconnected', `Disconnected from ${data.peripheral}`);
+      setConnectedDevice(null);
+      setDevices((prevDevices) => prevDevices.filter(device => device.id !== data.peripheral));
+    };
+
     const bleManagerEmitter = new NativeEventEmitter(NativeModules.BleManager);
     bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
     bleManagerEmitter.addListener('BleManagerStopScan', handleStopScan);
+    bleManagerEmitter.addListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
 
     return () => {
       console.log('Removing listeners...');
       bleManagerEmitter.removeListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
       bleManagerEmitter.removeListener('BleManagerStopScan', handleStopScan);
+      bleManagerEmitter.removeListener('BleManagerDisconnectPeripheral', handleDisconnectedPeripheral);
     };
-  }, []);
+  }, [setConnectedDevice]);
 
   const startScan = () => {
     if (!scanning) {

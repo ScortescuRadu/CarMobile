@@ -1,4 +1,3 @@
-// BluetoothContext.js
 import React, { createContext, useState, useEffect } from 'react';
 import BleManager from 'react-native-ble-manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
