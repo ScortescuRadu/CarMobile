@@ -43,7 +43,7 @@ const CameraScreen = () => {
         });
       }
     }
-    console.log(detections)
+    // console.log(detections)
     setDetections(detections);
   };
 
@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
   },
   detectionsContainer: {
     position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    top: 80,
+    right: 10,
+    backgroundColor: '#29f033',
     padding: 10,
-    zIndex: 1,
+    borderRadius: 5,
   },
   detectionText: {
-    color: 'white',
+    color: 'black',
     fontSize: 14,
     marginVertical: 2,
   },

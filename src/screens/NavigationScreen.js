@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext  } from 'react';
 import { StyleSheet, View, Text, Alert, TouchableOpacity, NativeModules, requireNativeComponent } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -11,6 +11,7 @@ import CompassHeading from 'react-native-compass-heading';
 import CameraProcessor from '../components/CameraProcessor.js';
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BluetoothContext } from '../components/BluetoothContext'; // Import BluetoothContext
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -49,6 +50,7 @@ export default function NavigationScreen() {
     const [isFinishModalVisible, setIsModalVisible] = useState(false);
     const [savedMarker, setSavedMarker] = useState(null);
     const [reservedMarker, setReservedMarker] = useState(null);
+    const { connectedDevice } = useContext(BluetoothContext);
 
     useEffect(() => {
         // Get current location
@@ -750,6 +752,11 @@ export default function NavigationScreen() {
                         <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
                             <Text style={styles.backButtonText}>Stop Trip</Text>
                         </TouchableOpacity>
+                        {connectedDevice && (
+                            <Text style={styles.connectedDeviceName}>
+                                Connected Device: {connectedDevice.name}
+                            </Text>
+                        )}
                     </View>
                 </>
             )}
@@ -1068,12 +1075,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalButton: {
-        backgroundColor: 'blue',
+        backgroundColor: 'black',
         padding: 10,
         borderRadius: 5,
         marginTop: 10,
     },
     modalButtonText: {
         color: 'white',
+    },
+    connectedDeviceName: {
+        color: 'white',
+        fontSize: 16,
+        marginTop: 200,
     },
 });

@@ -16,6 +16,8 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import SInfo from 'react-native-sensitive-info';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+
 
 const SECTIONS = [
   {
@@ -32,10 +34,10 @@ const SECTIONS = [
     ],
   },
   {
-    header: 'Content',
+    header: 'Device',
     items: [
-      { id: 'save', icon: 'save', label: 'Saved', type: 'link' },
-      { id: 'download', icon: 'download', label: 'Downloads', type: 'link' },
+      { id: 'sensor', icon: 'save', label: 'Sensor', type: 'link' },
+      { id: 'data', icon: 'save', label: 'Data', type: 'link' },
     ],
   },
 ];
@@ -49,6 +51,7 @@ export default function Example() {
 
   const [username, setUsername] = useState('');
   const [carId, setCarId] = useState('');
+  const navigation = useNavigation();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
@@ -242,7 +245,10 @@ export default function Example() {
                     ]}>
                     <TouchableOpacity
                       onPress={() => {
-                        // handle onPress
+                        if (id === 'sensor') {
+                          console.log('Navigating to Bluetooth Connection Screen');
+                          navigation.navigate('BluetoothConnection');
+                        }
                       }}>
                       <View style={styles.row}>
                         <FeatherIcon

@@ -20,7 +20,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { fetchToken } from '../CarMobile/src/utils/Parsers';
 import { Text } from 'react-native-svg';
 import CreateUserProfileScreen from './src/screens/CreateUserProfileScreen';
-
+import BluetoothConnectionScreen from './src/screens/BluetoothConnectionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -74,6 +74,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="CreateUserProfile" component={CreateUserProfileScreen} />
         <Stack.Screen name="Article" component={ArticleScreen} />
         <Stack.Screen name="AppNavigator" component={AppNavigator} />
+        <Stack.Screen name="BluetoothConnection" component={BluetoothConnectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </GestureHandlerRootView>

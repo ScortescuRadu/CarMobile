@@ -47,6 +47,10 @@
 	<string>We need your location to show you nearby parking lots.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your usage description here</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>We need your permission to use Bluetooth</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We need your permission to use Bluetooth</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
