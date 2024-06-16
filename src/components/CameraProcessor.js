@@ -43,6 +43,7 @@ const CameraScreen = () => {
         });
       }
     }
+    console.log(detections)
     setDetections(detections);
   };
 
@@ -83,22 +84,22 @@ const CameraScreen = () => {
   if (!device) return <NoCameraDeviceError />;
 
   return (
-    <View style={styles.container}>
+    // <View style={styles.container}>
       <Camera
-        style={StyleSheet.absoluteFill}
+        style={StyleSheet.absoluteFillObject}
         device={device}
         isActive={true}
         frameProcessor={frameProcessor}
         frameProcessorFps={1}
       />
-      <View style={styles.detectionsContainer}>
-        {detections.map((detection, index) => (
-          <Text key={index} style={styles.detectionText}>
-            Detected object at [{detection.box.left.toFixed(2)}, {detection.box.top.toFixed(2)}, {detection.box.right.toFixed(2)}, {detection.box.bottom.toFixed(2)}] with confidence {detection.score.toFixed(2)}
-          </Text>
-        ))}
-      </View>
-    </View>
+    //   <View style={styles.detectionsContainer}>
+    //     {detections.map((detection, index) => (
+    //       <Text key={index} style={styles.detectionText}>
+    //         Detected object at [{detection.box.left.toFixed(2)}, {detection.box.top.toFixed(2)}, {detection.box.right.toFixed(2)}, {detection.box.bottom.toFixed(2)}] with confidence {detection.score.toFixed(2)}
+    //       </Text>
+    //     ))}
+    //   </View>
+    // </View>
   );
 };
 
@@ -107,12 +108,6 @@ export default CameraScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  camera: {
-    flex: 1,
-    width: '100%',
   },
   detectionsContainer: {
     position: 'absolute',
@@ -120,6 +115,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 10,
+    zIndex: 1,
   },
   detectionText: {
     color: 'white',
