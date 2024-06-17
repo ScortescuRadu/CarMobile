@@ -13,7 +13,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/account/login', {
+      const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/account/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

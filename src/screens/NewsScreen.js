@@ -243,7 +243,7 @@ export default function NewsScreen(){
     try {
       setLoading(true);
       const topicQuery = topics.length ? `&topic=${topics.join(',').toLowerCase()}` : '';
-      const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/article/search/?query=${searchText}${topicQuery}`);
+      const response = await fetch(`https://frog-happy-uniformly-1.ngrok-free.app/article/search/?query=${searchText}${topicQuery}`);
       const data = await response.json();
       setSearchResults(data);
     } catch (error) {
@@ -259,20 +259,20 @@ export default function NewsScreen(){
       try {
         setLoading(true); // Set loading to true when fetching starts
     
-        const firstResponse = await fetch('https://frog-happy-uniformly.ngrok-free.app/article/latest/');
+        const firstResponse = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/article/latest/');
         const firstData = await firstResponse.json();
         setFirstArticles(firstData);
         
-        const topReadResponse = await fetch('https://frog-happy-uniformly.ngrok-free.app/article/top-read-last-week/');
+        const topReadResponse = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/article/top-read-last-week/');
         const topReadData = await topReadResponse.json();
         setTopReadArticles(topReadData);
 
-        const latestGreenResponse = await fetch('https://frog-happy-uniformly.ngrok-free.app/article/latest-green/');
+        const latestGreenResponse = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/article/latest-green/');
         const latestGreenData = await latestGreenResponse.json();
         console.log(latestGreenData)
         setLatestGreenArticle(latestGreenData);
 
-        const excludedResponse = await fetch('https://frog-happy-uniformly.ngrok-free.app/article/excluded-articles/');
+        const excludedResponse = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/article/excluded-articles/');
         const excludedData = await excludedResponse.json();
         setExcludedArticles(excludedData);
 
@@ -309,7 +309,7 @@ export default function NewsScreen(){
   const renderArticle = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item.id)}>
       <View style={styles.mainCoverContainer}>
-        <Image source={{ uri: `https://frog-happy-uniformly.ngrok-free.app/${item.cover}` }} style={styles.roundedImage} />
+        <Image source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app/${item.cover}` }} style={styles.roundedImage} />
         <View style={styles.topicContainer}>
           <Text style={styles.topicText}>{item.topic}</Text>
         </View>
@@ -342,7 +342,7 @@ export default function NewsScreen(){
             <View style={styles.articleNumberContainer}>
                 <Text style={styles.articleNumberText}>{index + 1}</Text>
             </View>
-            <Image source={{ uri: `https://frog-happy-uniformly.ngrok-free.app/${article.cover}` }} style={styles.popularImage} />
+            <Image source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app/${article.cover}` }} style={styles.popularImage} />
             <View style={styles.popularOverlay}>
                 <Text style={styles.popularTitle}>{article.title}</Text>
             </View>
@@ -355,7 +355,7 @@ export default function NewsScreen(){
     return (
       <TouchableOpacity onPress={() => handlePress(article.id)}>
         <View style={styles.topicCard}>
-            <Image source={{ uri: `https://frog-happy-uniformly.ngrok-free.app/${article.cover}` }} style={styles.topicImage} />
+            <Image source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app/${article.cover}` }} style={styles.topicImage} />
             <View style={styles.topicContent}>
                 <Text style={styles.mainTitle}>{article.topic}</Text>
                 <Text style={styles.topicTitle}>{article.title}</Text>
@@ -463,7 +463,7 @@ export default function NewsScreen(){
           </View>
           <View style={styles.popularCard}>
           <TouchableOpacity onPress={() => handlePress(latestGreenArticle.id)}>
-              <Image source={{ uri: `https://frog-happy-uniformly.ngrok-free.app${latestGreenArticle.cover}` }} style={styles.popularImage} />
+              <Image source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app${latestGreenArticle.cover}` }} style={styles.popularImage} />
               <View style={styles.popularOverlay}>
                 <Text style={styles.popularTitle}>{latestGreenArticle.title}</Text>
             </View>

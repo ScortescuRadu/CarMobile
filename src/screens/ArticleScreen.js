@@ -154,7 +154,7 @@ const ArticleScreen = () => {
   useEffect(() => {
     const fetchArticleDetails = async () => {
         try {
-            const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/article/read/?id=${id}`);
+            const response = await fetch(`https://frog-happy-uniformly-1.ngrok-free.app/article/read/?id=${id}`);
             const data = await response.json();
             // console.log('Fetched article data:', data);
       
@@ -228,7 +228,7 @@ const ArticleScreen = () => {
             <View style={styles.coverContainer}>
                 <Card elevation={10} style={styles.coverCard}>
                     <Image
-                        source={{ uri: `https://frog-happy-uniformly.ngrok-free.app${article.cover}` }}
+                        source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app${article.cover}` }}
                         style={styles.coverImage}
                         resizeMode="cover"
                     />
@@ -247,7 +247,7 @@ const ArticleScreen = () => {
                 <View style={styles.section1CoverContainer}>
                     <Card elevation={10} style={styles.section1CoverCard}>
                         <Image
-                            source={{ uri: `https://frog-happy-uniformly.ngrok-free.app${article.cover_section_1}` }}
+                            source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app${article.cover_section_1}` }}
                             style={styles.coverImage}
                             resizeMode="cover"
                         />
@@ -266,7 +266,7 @@ const ArticleScreen = () => {
                 <View style={styles.section2CoverContainer}>
                     <Card elevation={10} style={styles.section2CoverCard}>
                         <Image
-                            source={{ uri: `https://frog-happy-uniformly.ngrok-free.app${article.cover_section_2}` }}
+                            source={{ uri: `https://frog-happy-uniformly-1.ngrok-free.app${article.cover_section_2}` }}
                             style={styles.coverImage}
                             resizeMode="cover"
                         />

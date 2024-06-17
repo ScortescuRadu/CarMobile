@@ -54,7 +54,7 @@ export default function SignUpScreen() {
         }
     
         try {
-          const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/account/register', {
+          const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/account/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

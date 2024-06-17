@@ -28,7 +28,7 @@ export default function CreateUserProfileScreen() {
         }
     
         try {
-          const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/user-profile/create/', {
+          const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/user-profile/create/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

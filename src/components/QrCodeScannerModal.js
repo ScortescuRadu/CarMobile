@@ -32,7 +32,7 @@ const QrCodeScannerModal = ({ visible, onClose }) => {
         try {
             const userToken = await SInfo.getItem('authToken', {});
             console.log('sending data');
-            const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/parking-invoice/create-invoice/', {
+            const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/parking-invoice/create-invoice/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

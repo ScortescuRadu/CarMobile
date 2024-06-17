@@ -28,7 +28,7 @@ const CommentsSection = ({ articleId }) => {
         const payload = {
           access_token: await AsyncStorage.getItem('access_token'),
         };
-        const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/comment/article/${articleId}/`, {
+        const response = await fetch(`https://frog-happy-uniformly-1.ngrok-free.app/comment/article/${articleId}/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -94,7 +94,7 @@ const CommentsSection = ({ articleId }) => {
       return;
     }
 
-    const url = `hhttps://frog-happy-uniformly.ngrok-free.app/comment/${commentId}/like/`;
+    const url = `hhttps://frog-happy-uniformly-1.ngrok-free.app/comment/${commentId}/like/`;
     const method = isLiked ? 'DELETE' : 'POST';
     const payload = {
       access_token: await AsyncStorage.getItem('access_token'),
@@ -156,7 +156,7 @@ const CommentsSection = ({ articleId }) => {
       return;
     }
 
-    const url = `https://frog-happy-uniformly.ngrok-free.app/comment/${commentId}/dislike/`;
+    const url = `https://frog-happy-uniformly-1.ngrok-free.app/comment/${commentId}/dislike/`;
     const method = isDisliked ? 'DELETE' : 'POST';
     const payload = {
       access_token: await AsyncStorage.getItem('access_token'),
@@ -232,7 +232,7 @@ const CommentsSection = ({ articleId }) => {
     setComments(prevComments => [...prevComments, commentData]); // Optimistic update
     setNewComment('');
     try {
-      const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/comment/publish/', {
+      const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/comment/publish/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(commentData),
@@ -299,7 +299,7 @@ const CommentsSection = ({ articleId }) => {
     setComments(updatedComments);
 
     try {
-      const response = await fetch('https://frog-happy-uniformly.ngrok-free.app/comment/publish/', {
+      const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/comment/publish/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReply),
