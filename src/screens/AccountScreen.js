@@ -17,7 +17,7 @@ import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import SInfo from 'react-native-sensitive-info';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SECTIONS = [
   {
@@ -184,6 +184,16 @@ export default function Example() {
         });
   };
 
+  const handleLogout = async () => {
+    try {
+      await SInfo.deleteItem('authToken', {});
+      navigation.navigate('Login'); // Assuming 'Login' is the name of your login screen
+    } catch (error) {
+      console.error('Error logging out:', error);
+      Alert.alert('Error', 'Unable to log out. Please try again.');
+    }
+  };  
+
   useEffect(() => {
     fetchProfilePicture();
     fetchUserProfile();
@@ -286,6 +296,9 @@ export default function Example() {
             </View>
           </View>
         ))}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -418,5 +431,18 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+  },
+  /** Logout */
+  logoutButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    margin: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

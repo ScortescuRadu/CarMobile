@@ -49,6 +49,7 @@ export default function SignUpScreen() {
       };
 
     const handleSignUp = async () => {
+        console.log('signup')
         if (!validatePasswords()) {
           return;
         }

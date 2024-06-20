@@ -4,6 +4,7 @@ import { themeColors } from '../theme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {ArrowLeftIcon} from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SInfo from 'react-native-sensitive-info';
 
 // subscribe for more videos like this :)
@@ -23,42 +24,61 @@ export default function CreateUserProfileScreen() {
       };
 
     const handleSignUp = async () => {
-        if (!validatePasswords()) {
-          return;
+        console.log('creating')
+        // if (!validatePasswords()) {
+        //   return;
+        // }
+        console.log('sending profile data')
+        const token = await SInfo.getItem('authToken', {});
+        if (!token) {
+            Alert.alert('Sign Up Failed', 'Authentication token not found. Please log in again.');
+            return;
         }
     
         try {
-          const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/user-profile/create/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              username: username,
-              car_id: carId,
-            }),
-          });
-    
-          if (!response.ok) {
-            Alert.alert('Sign Up Failed', 'Unable to sign up. Please try again.');
-            return;
+            const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/user-profile/create/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                token: token,
+                username: username,
+                car_id: carId,
+              }),
+            });
+        
+            if (!response.ok) {
+              const errorData = await response.json();
+              let errorMessage = 'Unable to sign up. Please try again.';
+        
+              if (errorData.token) {
+                errorMessage = `Token: ${errorData.token.join(', ')}`;
+              }
+              if (errorData.username) {
+                errorMessage = `Username: ${errorData.username.join(', ')}`;
+              }
+              if (errorData.car_id) {
+                errorMessage = `Car ID: ${errorData.car_id.join(', ')}`;
+              }
+        
+              Alert.alert('Sign Up Failed', errorMessage);
+              return;
+            }
+        
+            const data = await response.json();
+        
+            // Save the token, car_id, and username to the device
+            await SInfo.setItem('authToken', 'your_token_here', {}); // Replace this with the actual token
+            await AsyncStorage.setItem('carId', data.car_id);
+            await AsyncStorage.setItem('username', data.username);
+        
+            // Navigate to AppNavigator after successful signup
+            navigation.navigate('AppNavigator');
+          } catch (error) {
+            console.error('Sign Up Error:', error);
+            Alert.alert('Sign Up Failed', 'An error occurred during sign up. Please try again.');
           }
-    
-          const data = await response.json();
-    
-          // Assuming the token is returned in the 'token' field of the response
-          const token = data.token;
-    
-          // Store the token securely using react-native-sensitive-info
-          await SInfo.setItem('authToken', token, {});
-    
-          // Navigate to AppNavigator after successful signup
-          navigation.navigate('AppNavigator');
-
-        } catch (error) {
-          console.error('Sign Up Error:', error);
-          Alert.alert('Sign Up Failed', 'An error occurred during sign up. Please try again.');
-        }
     };
 
     return (
