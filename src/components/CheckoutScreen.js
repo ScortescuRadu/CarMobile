@@ -163,31 +163,34 @@ export default function CheckoutScreen() {
       }
   };
 
-  const fetchPaidData = async (option) => {
-      try {
-          const token = await SInfo.getItem('authToken', {});
-          console.log('OPTION:', selectedOption);
-          const recentDays = calculateRecentDays(selectedOption);
-          console.log('RECENT', recentDays);
-          const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/parking-invoice/paid/', {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Token ${token}`,
-                  'Recent': recentDays,  // Convert to string before passing in headers
-              },
-          });
-
-          if (!response.ok) {
-              throw new Error('Error fetching data');
-          }
-
-          const data = await response.json();
-          console.log('Paid Data:', data);
-          setListData(data);
-      } catch (error) {
-          console.error('Error fetching data:', error);
+  const fetchPaidData = async (selectedOption) => {
+    try {
+      const token = await SInfo.getItem('authToken', {});
+      console.log('OPTION:', selectedOption);
+      const recentDays = calculateRecentDays(selectedOption);
+      console.log('RECENT', recentDays);
+  
+      const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/parking-invoice/paid/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: token,
+          recent_param: recentDays,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error fetching data');
       }
+  
+      const data = await response.json();
+      console.log('Paid Data:', data);
+      setListData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleOptionPress = (option) => {
