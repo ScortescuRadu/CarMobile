@@ -51,6 +51,7 @@ export default function NavigationScreen() {
     const [savedMarker, setSavedMarker] = useState(null);
     const [reservedMarker, setReservedMarker] = useState(null);
     const { connectedDevice } = useContext(BluetoothContext);
+    const [spotInfo, setSpotInfo] = useState(null);
 
     useEffect(() => {
         // Get current location
@@ -110,13 +111,14 @@ export default function NavigationScreen() {
         if (confirmPress) {
             console.log('Polling started because confirmPress is true');
             const interval = setInterval(async () => {
-                if (reservedMarker) {
+                if (reservedMarker && reservedMarker.type !== 'parkingLot') {
                     try {
-                        console.log(`Polling marker status for marker ID: ${reservedMarker}`);
+                        console.log(`Polling marker status for marker ID: ${reservedMarker.id}`);
                         const response = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/status/${reservedMarker.id}/`);
                         const data = await response.json();
                         console.log('Polled data:', data);
                         if (data.is_occupied) {
+                            console.log('reservedMarker', reservedMarker)
                             Alert.alert('Notification', 'Your reserved spot is now occupied. Redirecting to the closest available spot.');
                             const closestResponse = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/closest-available/?lat=${reservedMarker.latitude}&lng=${reservedMarker.longitude}`);
                             const closestMarker = await closestResponse.json();
@@ -144,8 +146,50 @@ export default function NavigationScreen() {
                         console.error('Error polling marker status:', error);
                     }
                 }
+                else if (reservedMarker && reservedMarker.type === 'parkingLot'){
+                    const reservedLocation = {
+                        latitude: reservedMarker.latitude,
+                        longitude: reservedMarker.longitude,
+                    };
+                    if (currentLocation && selectedLocation) {
+                        const distance = getDistanceFromLatLonInMeters(currentLocation, reservedLocation);
+                        console.log('Distance from destination:', distance);
+                        if (distance < 10) {
+                            try {
+                                console.log('Attempting to report arrival...');
+                                console.log('Reserved Marker Street Address:', reservedMarker.street_address);
+                            
+                                const response = await fetch(`https://frog-happy-uniformly-1.ngrok-free.app/parking/available-spot/`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        street_address: reservedMarker.street_address,
+                                    }),
+                                });
+                            
+                                console.log('Response status:', response.status);
+                                console.log('Response status text:', response.statusText);
+                            
+                                if (response.ok) {
+                                    const spotData = await response.json();
+                                    console.log('Arrived at the parking lot:', spotData);
+                                    setSpotInfo(spotData);
+                                    clearInterval(interval); // Stop the polling
+                                } else {
+                                    const errorData = await response.json();
+                                    console.error('Error reporting arrival:', errorData);
+                                }
+                            } catch (error) {
+                                console.error('Error reporting arrival:', error.message);
+                                console.error('Error stack:', error.stack);
+                            }
+                        }
+                    }
+                }
             }, POLLING_INTERVAL);
-    
+
             return () => clearInterval(interval);
         } else {
             console.log('Polling not started because confirmPress is false');
@@ -183,13 +227,16 @@ export default function NavigationScreen() {
     
             const scanResponse = await fetch(`https://frog-happy-uniformly.ngrok-free.app/marker/scan/?lat=${latitude}&lon=${longitude}&distance=${distance}`);
             const scanData = await scanResponse.json();
-    
+            
             const combinedData = [
                 ...parkingData.map((item) => ({
                     id: item.id,
                     latitude: item.latitude,
                     longitude: item.longitude,
                     price: item.price,
+                    occupancy: item.current_occupancy,
+                    capacity: item.capacity,
+                    street_address: item.street_address,
                     type: 'parkingLot',
                 })),
                 ...scanData.map((item) => ({
@@ -302,6 +349,18 @@ export default function NavigationScreen() {
                 Alert.alert('Error', 'Failed to reserve marker');
                 return;
             }
+        }
+        if (selectedMarker.type === 'parkingLot') {
+            console.log('selected parking lot')
+            console.log('Selected Marker:', selectedMarker);
+            setReservedMarker({
+                id: selectedMarker.id,
+                latitude: selectedMarker.latitude,
+                longitude: selectedMarker.longitude,
+                street_address: selectedMarker.street_address,
+                type: selectedMarker.type,
+            });
+            console.log(confirmPress)
         }
         mapViewRef.current.animateToRegion({
             ...currentLocation,
@@ -568,6 +627,7 @@ export default function NavigationScreen() {
                                     {marker.type === 'parkingLot' ? (
                                         <>
                                             <Text>Price: ${marker.price}</Text>
+                                            <Text>{marker.occupancy}/{marker.capacity}</Text>
                                             <TouchableOpacity onPress={() => {
                                                 if (!showRoutes) handleStartPress();
                                                 }} style={styles.startButton}>
@@ -837,6 +897,11 @@ export default function NavigationScreen() {
                     <Text>Free Spot</Text>
                 </TouchableOpacity>
             )}
+            {confirmPress && spotInfo && (
+                <View style={styles.spotInfoContainer}>
+                    <Text style={styles.spotInfoText}>{`${spotInfo.level}:${spotInfo.sector}${spotInfo.number}`}</Text>
+                </View>
+            )}
             {isLoading && (
                 <View style={styles.loadingOverlay}>
                     <Spinner isVisible={true} size={100} type="Circle" color="#FFF" />
@@ -1087,5 +1152,22 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         marginTop: 200,
+    },
+    spotInfoContainer: {
+        position: 'absolute',
+        bottom: '62%',
+        rigth: '75%',
+        left: '5%',
+        backgroundColor: 'rgba(0, 128, 0, 0.8)',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 2,
+    },
+    spotInfoText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
