@@ -36,6 +36,7 @@ export default function LoginScreen() {
 
       // Store the token securely using react-native-sensitive-info
       await SInfo.setItem('authToken', token, {});
+      console.log('login token received', token)
 
       // Navigate to AppNavigator after successful signup
       navigation.navigate('AppNavigator');

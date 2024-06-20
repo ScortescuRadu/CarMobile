@@ -69,7 +69,7 @@ export default function CreateUserProfileScreen() {
             const data = await response.json();
         
             // Save the token, car_id, and username to the device
-            await SInfo.setItem('authToken', 'your_token_here', {}); // Replace this with the actual token
+            // await SInfo.setItem('authToken', 'your_token_here', {}); // Replace this with the actual token
             await AsyncStorage.setItem('carId', data.car_id);
             await AsyncStorage.setItem('username', data.username);
         

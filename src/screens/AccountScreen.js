@@ -119,49 +119,68 @@ export default function Example() {
         type: 'image/jpeg', // adjust the type based on the image format
         name: 'profile_picture.jpg',
       });
-
+  
       const token = await SInfo.getItem('authToken', {});
-
+      if (!token) {
+        Alert.alert('Error', 'Authentication token not found. Please log in again.');
+        return;
+      }
+  
+      // Add the token to the form data
+      formData.append('token', token);
+  
       const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/profile-picture/change/', {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Token ${token}`,
         },
         body: formData,
       });
-
+  
       if (response.ok) {
         console.log('Image uploaded successfully');
       } else {
-        console.error('Error uploading image to the server:', response.statusText);
-        Alert.alert('Error', 'Unable to upload image to the server. Please try again.');
+        const errorData = await response.json();
+        console.error('Error uploading image to the server:', errorData);
+        Alert.alert('Error', `Unable to upload image to the server: ${errorData.message}`);
       }
     } catch (error) {
       console.error('Error sending image to the server:', error);
       Alert.alert('Error', 'Unable to send image to the server. Please try again.');
     }
-  }
+  };
 
   const fetchProfilePicture = async () => {
-    const token = await SInfo.getItem('authToken', {});
+    try {
+      const token = await SInfo.getItem('authToken', {});
+      if (!token) {
+        console.error('Token not found');
+        return;
+      }
+      console.log(token)
   
-    fetch('https://frog-happy-uniformly-1.ngrok-free.app/profile-picture/display/', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProfilePicture(`${data.cover}?${new Date().getTime()}`);
-        console.log('cover:', data.cover)
-      })
-      .catch((error) => {
-        console.error('Error fetching profile picture:', error);
+      const response = await fetch('https://frog-happy-uniformly-1.ngrok-free.app/profile-picture/display/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: token }),
       });
-  };
+  
+      if (response.ok) {
+        const data = await response.json();
+        const baseUrl = 'https://frog-happy-uniformly-1.ngrok-free.app';
+        const imageUrl = `${baseUrl}${data.cover}?${new Date().getTime()}`;
+        setProfilePicture(imageUrl);
+        console.log('cover:', imageUrl);
+      } else {
+        const errorData = await response.json();
+        console.error('Error fetching profile picture:', errorData);
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+    }
+  };  
 
   const fetchUserProfile = async () => {
       const token = await SInfo.getItem('authToken', {});
@@ -195,8 +214,21 @@ export default function Example() {
   };  
 
   useEffect(() => {
+    console.log('profile')
+    const loadProfileData = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        const storedCarId = await AsyncStorage.getItem('carId');
+        if (storedUsername) setUsername(storedUsername);
+        if (storedCarId) setCarId(storedCarId);
+      } catch (error) {
+        console.error('Error loading profile data from storage:', error);
+      }
+    };
+  
+    loadProfileData();
     fetchProfilePicture();
-    fetchUserProfile();
+    // fetchUserProfile();
   }, []);
 
   return (
@@ -216,9 +248,9 @@ export default function Example() {
                   }}
                   style={styles.profileAvatar} />
                 </TouchableOpacity>
-              <Text style={styles.profileName}>radusco</Text>
+              <Text style={styles.profileName}>{username}</Text>
 
-              <Text style={styles.profileEmail}>TM22SCO</Text>
+              <Text style={styles.profileEmail}>{carId}</Text>
             </View>
 
             <Modal
