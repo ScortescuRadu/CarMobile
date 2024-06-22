@@ -22,7 +22,7 @@ const CameraScreen = () => {
   const device = useCameraDevice('back');
   const [hasPermission, setHasPermission] = useState(false);
   const [detections, setDetections] = useState([]);
-  const objectDetection = useTensorflowModel(require('../assets/model/1.tflite'));
+  const objectDetection = useTensorflowModel(require('../assets/model/best_float32.tflite'));
   const model = objectDetection.state === "loaded" ? objectDetection.model : undefined;
 
   const { resize } = createResizePlugin();
@@ -55,11 +55,11 @@ const CameraScreen = () => {
 
     const resized = resize(frame, {
       scale: {
-        width: 300,
-        height: 300
+        width: 640,  // 300
+        height: 640 // 300
       },
       pixelFormat: 'rgb',
-      dataType: 'uint8'
+      dataType: 'float32'  // uint8
     });
 
     const outputs = model.runSync([resized]);

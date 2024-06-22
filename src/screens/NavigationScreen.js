@@ -566,7 +566,7 @@ export default function NavigationScreen() {
                     visible={levelNavigationVisibility}
                     onClose={() => setLevelNavigationVisibility(false)}
                     currentLocation={currentLocation}
-                    selectedMarker={selectedMarker}
+                    destination={selectedMarker}
                 />
             )}
             <QrCodeScannerModal

@@ -30,7 +30,7 @@ const getDistance = (currentLocation, destination) => {
 const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) => {
     const [heading, setHeading] = useState(0);
     const rotationValue = useSharedValue(0);
-    const [distance, setDistance] = useState(10.00);
+    const [distance, setDistance] = useState(9.00);
     const [altitudeDifference, setAltitudeDifference] = useState(0);
 
     useEffect(() => {
@@ -55,6 +55,8 @@ const NavigationOverlay = ({ visible, onClose, currentLocation, destination }) =
     }, [heading]);
 
     useEffect(() => {
+        console.log('Current Location:', currentLocation);
+        console.log('Destination:', destination);
         if (currentLocation && destination) {
             const dist = getDistance(currentLocation, destination);
             setDistance(dist);
