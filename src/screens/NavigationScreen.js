@@ -12,6 +12,7 @@ import CameraProcessor from '../components/CameraProcessor.js';
 import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BluetoothContext } from '../components/BluetoothContext'; // Import BluetoothContext
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const isCoordinateNearMarkers = (coordinate, markers, threshold) => {
     for (let marker of markers) {
@@ -52,6 +53,22 @@ export default function NavigationScreen() {
     const [reservedMarker, setReservedMarker] = useState(null);
     const { connectedDevice } = useContext(BluetoothContext);
     const [spotInfo, setSpotInfo] = useState(null);
+
+    useEffect(() => {
+        let interval;
+    
+        if (confirmPress && currentLocation) {
+            interval = setInterval(async () => {
+                console.log('Fetching nearby parking lots during navigation...');
+                await fetchNearbyParkingLots(currentLocation.latitude, currentLocation.longitude, 1);
+            }, 2000); // Fetch every 5 seconds
+        } else {
+            console.log('Stopping fetchNearbyParkingLots interval');
+            clearInterval(interval);
+        }
+    
+        return () => clearInterval(interval);
+    }, [confirmPress, currentLocation]);
 
     useEffect(() => {
         // Get current location

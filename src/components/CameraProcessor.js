@@ -8,7 +8,7 @@ import { Worklets } from 'react-native-worklets-core';
 
 const PermissionsPage = () => (
   <View style={styles.container}>
-    <Text>Waiting for permissions</Text>
+    <Text></Text>
   </View>
 );
 
@@ -108,6 +108,7 @@ export default CameraScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'black'
   },
   detectionsContainer: {
     position: 'absolute',
