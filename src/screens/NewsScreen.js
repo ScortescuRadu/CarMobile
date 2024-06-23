@@ -254,7 +254,6 @@ export default function NewsScreen(){
   };
 
   useEffect(() => {
-    // Fetch the first article data here (replace with your actual fetch logic)
     const fetchFirstArticle = async () => {
       try {
         setLoading(true); // Set loading to true when fetching starts

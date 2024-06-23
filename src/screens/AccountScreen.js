@@ -16,7 +16,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import SInfo from 'react-native-sensitive-info';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SECTIONS = [
@@ -116,7 +116,7 @@ export default function Example() {
       const formData = new FormData();
       formData.append('cover', {
         uri: imagePath,
-        type: 'image/jpeg', // adjust the type based on the image format
+        type: 'image/jpeg',
         name: 'profile_picture.jpg',
       });
   
@@ -206,7 +206,7 @@ export default function Example() {
   const handleLogout = async () => {
     try {
       await SInfo.deleteItem('authToken', {});
-      navigation.navigate('Login'); // Assuming 'Login' is the name of your login screen
+      navigation.navigate('Login');
     } catch (error) {
       console.error('Error logging out:', error);
       Alert.alert('Error', 'Unable to log out. Please try again.');

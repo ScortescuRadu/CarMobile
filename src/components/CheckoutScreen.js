@@ -140,7 +140,7 @@ export default function CheckoutScreen() {
       initializePaymentSheet();
       fetchData();
       fetchPaidData();
-  }, []); // Empty dependency array to run the effect only once
+  }, []);
 
   const handleRefresh = () => {
       setLoading(false); // Reset loading state

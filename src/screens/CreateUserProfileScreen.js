@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SInfo from 'react-native-sensitive-info';
 
-// subscribe for more videos like this :)
+
 export default function CreateUserProfileScreen() {
     const navigation = useNavigation();
     const [username, setUsername] = useState('');

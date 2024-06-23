@@ -6,7 +6,6 @@ import {ArrowLeftIcon} from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
 import SInfo from 'react-native-sensitive-info';
 
-// subscribe for more videos like this :)
 export default function SignUpScreen() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');

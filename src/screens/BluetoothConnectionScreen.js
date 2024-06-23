@@ -87,8 +87,8 @@ const BluetoothConnectionScreen = () => {
       })
       .then((peripheralInfo) => {
         console.log('Peripheral info:', peripheralInfo);
-        const serviceUUID = peripheralInfo.services[0].uuid; // Adjust based on your device
-        const characteristicUUID = peripheralInfo.characteristics[0].uuid; // Adjust based on your device
+        const serviceUUID = peripheralInfo.services[0].uuid;
+        const characteristicUUID = peripheralInfo.characteristics[0].uuid;
         return BleManager.startNotification(device.id, serviceUUID, characteristicUUID);
       })
       .then(() => {

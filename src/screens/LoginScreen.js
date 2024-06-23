@@ -31,10 +31,8 @@ export default function LoginScreen() {
 
       const data = await response.json();
 
-      // Assuming the token is returned in the 'token' field of the response
       const token = data.token;
 
-      // Store the token securely using react-native-sensitive-info
       await SInfo.setItem('authToken', token, {});
       console.log('login token received', token)
 
