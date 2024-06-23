@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { View, useColorScheme } from 'react-native';
+import { View, useColorScheme, LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppNavigator from './src/components/AppNavigator';
@@ -21,6 +21,17 @@ import { fetchToken } from '../CarMobile/src/utils/Parsers';
 import { Text } from 'react-native-svg';
 import CreateUserProfileScreen from './src/screens/CreateUserProfileScreen';
 import BluetoothConnectionScreen from './src/screens/BluetoothConnectionScreen';
+
+// Ignore all log notifications
+LogBox.ignoreAllLogs(true);
+
+// Suppress console logs in production
+if (!__DEV__) {
+  console.log = () => {};
+  console.info = () => {};
+  console.warn = () => {};
+  console.error = () => {};
+}
 
 const Stack = createNativeStackNavigator();
 

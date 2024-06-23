@@ -39,7 +39,7 @@ export default function CheckoutScreen() {
       const token = await SInfo.getItem('authToken', {});
 
       const data = {
-          price: 0.5, // Replace with the variable or value representing the price
+          price: 2.5,
       };
 
       try {
@@ -242,11 +242,13 @@ export default function CheckoutScreen() {
       </TouchableOpacity>
   );
 
+  const amountToPay = (headerData.time_spent * headerData.hourly_price).toFixed(2);
+
   return (
       <SafeAreaView style={styles.container}>
           <View style={styles.headerContainer}>
               {renderReloadButton()}
-              <Text style={styles.headerTitle}>TO PAY: {headerData.time_spent * headerData.hourly_price} lei</Text>
+              <Text style={styles.headerTitle}>TO PAY: {amountToPay} lei</Text>
               <Text style={styles.headerSubtitle}>Section: {headerData.spot_description}</Text>
               <Text style={styles.headerTimestamp}>Hourly Rate: {headerData.hourly_price} lei</Text>
               <TouchableOpacity style={styles.bigGreenButton} onPress={openPaymentSheet}>
